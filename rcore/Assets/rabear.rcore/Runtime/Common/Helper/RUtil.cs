@@ -3,17 +3,16 @@
  **/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 namespace RCore.Common
@@ -366,6 +365,29 @@ namespace RCore.Common
 			char[] sentenceEnders = { '.', '?', '!', '\n', '\r' };
 			int index = text.IndexOfAny(sentenceEnders);
 			return index >= 0 ? text.Substring(0, index + 1) : text;
+		}
+		
+		public static T Clone<T>(T source)
+		{
+			if (!typeof(T).IsSerializable)
+			{
+				throw new ArgumentException("The type must be serializable.", "source");
+			}
+
+			// Don't serialize a null object, simply return the default for that object
+			if (ReferenceEquals(source, null))
+			{
+				return default;
+			}
+
+			IFormatter formatter = new BinaryFormatter();
+			Stream stream = new MemoryStream();
+			using (stream)
+			{
+				formatter.Serialize(stream, source);
+				stream.Seek(0, SeekOrigin.Begin);
+				return (T)formatter.Deserialize(stream);
+			}
 		}
 	}
 
@@ -747,9 +769,7 @@ namespace RCore.Common
 					float jDistance = Vector3.Distance(pPosition, jSpawnPos);
 					if (iDistance > jDistance)
 					{
-						var temp = pPositions[i];
-						pPositions[i] = pPositions[j];
-						pPositions[j] = temp;
+						(pPositions[i], pPositions[j]) = (pPositions[j], pPositions[i]);
 					}
 				}
 			}
@@ -763,15 +783,7 @@ namespace RCore.Common
 			if (index1 < 0 || index2 < 0 || index1 == index2 || index1 >= list.Count || index2 >= list.Count)
 				return;
 
-			var value = list[index1];
-			list[index1] = list[index2];
-			list[index2] = value;
-		}
-		
-		public static T Clone<T>(this T self)
-		{
-			var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(self);
-			return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(serialized);
+			(list[index1], list[index2]) = (list[index2], list[index1]);
 		}
 
 		public static bool IsChildOfParent(this Transform pItem, Transform pParent)

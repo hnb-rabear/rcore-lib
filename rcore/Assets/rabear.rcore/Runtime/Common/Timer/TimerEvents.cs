@@ -14,8 +14,8 @@ namespace RCore.Common
 
     public class TimerEvents : MonoBehaviour
     {
-        private CountdownEventsManager m_CountdownEventsManager = new CountdownEventsManager();
-        private ConditionEventsManager m_ConditionEventsManager = new ConditionEventsManager();
+        private CountdownEventsGroup m_countdownEventsGroup = new CountdownEventsGroup();
+        private ConditionEventsGroup m_conditionEventsGroup = new ConditionEventsGroup();
         private List<DelayableEvent> m_DelayableEvents = new List<DelayableEvent>();
         private List<IUpdate> m_UpdateActions = new List<IUpdate>();
         public Benchmark benchmark;
@@ -31,8 +31,8 @@ namespace RCore.Common
         }
         private void LateUpdate()
         {
-            m_CountdownEventsManager.LateUpdate();
-            m_ConditionEventsManager.LateUpdate();
+            m_countdownEventsGroup.LateUpdate();
+            m_conditionEventsGroup.LateUpdate();
 
             if (m_DelayableEvents.Count > 0)
             {
@@ -46,14 +46,14 @@ namespace RCore.Common
                     }
                 }
             }
-            enabled = !m_CountdownEventsManager.IsEmpty || !m_ConditionEventsManager.IsEmpty || m_UpdateActions.Count > 0 || m_DelayableEvents.Count > 0;
+            enabled = !m_countdownEventsGroup.IsEmpty || !m_conditionEventsGroup.IsEmpty || m_UpdateActions.Count > 0 || m_DelayableEvents.Count > 0;
         }
 
 #region Countdown Events
 
         public CountdownEvent WaitForSeconds(CountdownEvent pEvent)
         {
-            m_CountdownEventsManager.Register(pEvent);
+            m_countdownEventsGroup.Register(pEvent);
             enabled = true;
             return pEvent;
         }
@@ -87,11 +87,11 @@ namespace RCore.Common
         }
         public void RemoveCountdownEvent(int id)
         {
-            m_CountdownEventsManager.UnRegister(id);
+            m_countdownEventsGroup.UnRegister(id);
         }
         public void RemoveCountdownEvent(CountdownEvent pCounter)
         {
-            m_CountdownEventsManager.UnRegister(pCounter);
+            m_countdownEventsGroup.UnRegister(pCounter);
         }
 
 #endregion
@@ -100,7 +100,7 @@ namespace RCore.Common
 
         public ConditionEvent WaitForCondition(ConditionEvent pEvent)
         {
-            m_ConditionEventsManager.Register(pEvent);
+            m_conditionEventsGroup.Register(pEvent);
             enabled = true;
             return pEvent;
         }
@@ -116,11 +116,11 @@ namespace RCore.Common
 
         public void RemoveConditionEvent(int id)
         {
-            m_ConditionEventsManager.UnRegister(id);
+            m_conditionEventsGroup.UnRegister(id);
         }
         public void RemoveConditionEvent(ConditionEvent pCounter)
         {
-            m_ConditionEventsManager.UnRegister(pCounter);
+            m_conditionEventsGroup.UnRegister(pCounter);
         }
         public Task WaitTask(Task pTask, Action onTrigger)
         {
@@ -149,7 +149,7 @@ namespace RCore.Common
         }
         public void OnApplicationPause(bool pause)
         {
-            m_CountdownEventsManager.OnApplicationPause(pause);
+            m_countdownEventsGroup.OnApplicationPause(pause);
         }
         public void AddDelayableEvent(DelayableEvent e)
         {
@@ -175,8 +175,8 @@ namespace RCore.Common
         }
         public void Clear()
         {
-            m_CountdownEventsManager = new CountdownEventsManager();
-            m_ConditionEventsManager = new ConditionEventsManager();
+            m_countdownEventsGroup = new CountdownEventsGroup();
+            m_conditionEventsGroup = new ConditionEventsGroup();
             m_DelayableEvents = new List<DelayableEvent>();
             m_UpdateActions = new List<IUpdate>();
             enabled = false;

@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace RCore.Common
 {
-    [Serializable]
     public class CountdownEvent
     {
         public int id;
@@ -59,9 +58,6 @@ namespace RCore.Common
         }
     }
 
-    //=======================================================
-
-    [Serializable]
     public class ConditionEvent
     {
         public int id;
@@ -81,9 +77,22 @@ namespace RCore.Common
         }
     }
 
+    public class DelayableEvent
+    {
+	    public string key;
+	    public float delay;
+	    public BaseEvent @event;
+	    public DelayableEvent(BaseEvent @event, float pDelay)
+	    {
+		    @event = @event;
+		    key = @event.GetType().ToString();
+		    delay = pDelay;
+	    }
+    }
+    
     //====================== COUNT DOWN EVENTS SYSTEM =========================
 
-    public class CountdownEventsManager
+    public class CountdownEventsGroup
     {
         private readonly List<CountdownEvent> m_countdownEvents = new List<CountdownEvent>();
         private float m_timeBeforePause;
@@ -177,7 +186,7 @@ namespace RCore.Common
 
     //====================== CONDITION EVENTS SYSTEM ===============================
 
-    public class ConditionEventsManager
+    public class ConditionEventsGroup
     {
         private readonly List<ConditionEvent> m_ConditionEvents = new List<ConditionEvent>();
 
@@ -243,19 +252,6 @@ namespace RCore.Common
         public void UnRegister(ConditionEvent pEvent)
         {
             m_ConditionEvents.Remove(pEvent);
-        }
-    }
-
-    public class DelayableEvent
-    {
-        public string key;
-        public float delay;
-        public BaseEvent @event;
-        public DelayableEvent(BaseEvent @event, float pDelay)
-        {
-            @event = @event;
-            key = @event.GetType().ToString();
-            delay = pDelay;
         }
     }
 }

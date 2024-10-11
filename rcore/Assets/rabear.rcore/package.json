@@ -1,0 +1,15 @@
+{
+  "name": "rabear.rcore",
+  "version": "1.0.0",
+  "displayName": "RCore",
+  "description": "",
+  "unity": "2022.3",
+    "author": {
+    "name": "HungNB",
+    "email": "nbhung71711@gmail.com",
+    "url": "https://github.com/hnb-rabear"
+  }
+  "dependencies": {
+	  
+  }
+}

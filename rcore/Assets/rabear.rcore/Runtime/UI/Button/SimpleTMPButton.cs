@@ -5,6 +5,7 @@
 using TMPro;
 using UnityEngine;
 using RCore.Common;
+using UnityEngine.Serialization;
 
 namespace RCore.UI
 {
@@ -28,13 +29,19 @@ namespace RCore.UI
 
 		private bool mFindLabel;
 
-		[SerializeField] protected bool mFontColorSwap;
-		[SerializeField] protected Color mFontColorActive;
-		[SerializeField] protected Color mFontColorInactive;
+		[FormerlySerializedAs("mFontColorSwap")]
+		[SerializeField] protected bool m_fontColorOnOffSwap;
+		[FormerlySerializedAs("mFontColorActive")]
+		[SerializeField] protected Color m_fontColorOn;
+		[FormerlySerializedAs("mFontColorInactive")]
+		[SerializeField] protected Color m_fontColorOff;
 
-		[SerializeField] protected bool m_LabelMatSwap;
-		[SerializeField] public Material m_LabelMatActive;
-		[SerializeField] public Material m_LabelMatInactive;
+		[FormerlySerializedAs("m_LabelMatSwap")]
+		[SerializeField] protected bool m_labelMatOnOffSwap;
+		[FormerlySerializedAs("m_LabelMatActive")]
+		[SerializeField] public Material m_labelMatOn;
+		[FormerlySerializedAs("m_LabelMatInactive")]
+		[SerializeField] public Material m_labelMatOff;
 
 #if UNITY_EDITOR
 		[ContextMenu("Validate")]
@@ -45,15 +52,15 @@ namespace RCore.UI
 			if (mLabelTMP == null)
 				mLabelTMP = GetComponentInChildren<TextMeshProUGUI>();
 			if (mLabelTMP == null)
-				m_LabelMatSwap = false;
-			if (!m_LabelMatSwap)
+				m_labelMatOnOffSwap = false;
+			if (!m_labelMatOnOffSwap)
 			{
-				m_LabelMatActive = null;
-				m_LabelMatInactive = null;
+				m_labelMatOn = null;
+				m_labelMatOff = null;
 			}
-			else if (m_LabelMatActive == null)
+			else if (m_labelMatOn == null)
 			{
-				m_LabelMatActive = mLabelTMP.fontSharedMaterial;
+				m_labelMatOn = mLabelTMP.fontSharedMaterial;
 			}
 		}
 #endif
@@ -64,29 +71,29 @@ namespace RCore.UI
 
 			if (pValue)
 			{
-				if (mFontColorSwap)
-					mLabelTMP.color = mFontColorActive;
-				if (m_LabelMatSwap && m_LabelMatActive != null && m_LabelMatInactive != null)
+				if (m_fontColorOnOffSwap)
+					mLabelTMP.color = m_fontColorOn;
+				if (m_labelMatOnOffSwap && m_labelMatOn != null && m_labelMatOff != null)
 				{
 					var labels = gameObject.FindComponentsInChildren<TextMeshProUGUI>();
 					foreach (var label in labels)
 					{
 						if (label.font == mLabelTMP.font && label.fontSharedMaterial == mLabelTMP.fontSharedMaterial)
-							label.fontSharedMaterial = m_LabelMatActive;
+							label.fontSharedMaterial = m_labelMatOn;
 					}
 				}
 			}
 			else
 			{
-				if (mFontColorSwap)
-					mLabelTMP.color = mFontColorInactive;
-				if (m_LabelMatSwap && m_LabelMatActive != null && m_LabelMatInactive != null)
+				if (m_fontColorOnOffSwap)
+					mLabelTMP.color = m_fontColorOff;
+				if (m_labelMatOnOffSwap && m_labelMatOn != null && m_labelMatOff != null)
 				{
 					var labels = gameObject.FindComponentsInChildren<TextMeshProUGUI>();
 					foreach (var label in labels)
 					{
 						if (label.font == mLabelTMP.font && label.fontSharedMaterial == mLabelTMP.fontSharedMaterial)
-							label.fontSharedMaterial = m_LabelMatInactive;
+							label.fontSharedMaterial = m_labelMatOff;
 					}
 				}
 			}

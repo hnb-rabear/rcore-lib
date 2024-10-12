@@ -10,25 +10,25 @@ namespace RCore.UI.Editor
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(SimpleTMPButton), true)]
-    public class SimpleTMPButtonEditor : JustButtonEditor
+    public class SimpleTMPButtonEditor : JustButton.JustButtonEditor
     {
-        private SimpleTMPButton mButton;
-        private string[] m_MatsName;
-        private Material[] m_LabelMats;
+        private SimpleTMPButton m_target;
+        private string[] m_matsName;
+        private Material[] m_labelMats;
 
         protected override void OnEnable()
         {
             base.OnEnable();
 
-            mButton = (SimpleTMPButton)target;
-            m_MatsName = Array.Empty<string>();
-            m_LabelMats = Array.Empty<Material>();
-            if (mButton.labelTMP != null)
+            m_target = (SimpleTMPButton)target;
+            m_matsName = Array.Empty<string>();
+            m_labelMats = Array.Empty<Material>();
+            if (m_target.labelTMP != null)
             {
-                m_LabelMats = TMPro.EditorUtilities.TMP_EditorUtility.FindMaterialReferences(mButton.labelTMP.font);
-                m_MatsName = new string[m_LabelMats.Length];
-                for (int i = 0; i < m_LabelMats.Length; i++)
-                    m_MatsName[i] = m_LabelMats[i].name;
+                m_labelMats = TMPro.EditorUtilities.TMP_EditorUtility.FindMaterialReferences(m_target.labelTMP.font);
+                m_matsName = new string[m_labelMats.Length];
+                for (int i = 0; i < m_labelMats.Length; i++)
+                    m_matsName[i] = m_labelMats[i].name;
             }
         }
 
@@ -38,26 +38,26 @@ namespace RCore.UI.Editor
 
             EditorGUILayout.BeginVertical("box");
             {
-                var fontColorSwap = EditorHelper.SerializeField(serializedObject, "mFontColorSwap");
+                var fontColorSwap = EditorHelper.SerializeField(serializedObject, "m_fontColorOnOffSwap");
                 if (fontColorSwap.boolValue)
                 {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.BeginVertical("box");
-                    EditorHelper.SerializeField(serializedObject, "mFontColorActive");
-                    EditorHelper.SerializeField(serializedObject, "mFontColorInactive");
+                    EditorHelper.SerializeField(serializedObject, "m_fontColorOn");
+                    EditorHelper.SerializeField(serializedObject, "m_fontColorOff");
                     EditorGUILayout.EndVertical();
                     EditorGUI.indentLevel--;
                 }
 
-                var labelMatSwap = EditorHelper.SerializeField(serializedObject, "m_LabelMatSwap");
+                var labelMatSwap = EditorHelper.SerializeField(serializedObject, "m_labelMatOnOffSwap");
                 if (labelMatSwap.boolValue)
                 {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.BeginVertical("box");
-                    var labelMatActiveName = EditorHelper.DropdownList(mButton.m_LabelMatActive ? mButton.m_LabelMatActive.name : "", "Active Mat", m_MatsName.ToArray());
-                    mButton.m_LabelMatActive = m_MatsName.Contains(labelMatActiveName) ? m_LabelMats[m_MatsName.IndexOf(labelMatActiveName)] : null;
-                    var labelMatInactiveName = EditorHelper.DropdownList(mButton.m_LabelMatInactive ? mButton.m_LabelMatInactive.name : "", "Inactive Mat", m_MatsName.ToArray());
-                    mButton.m_LabelMatInactive = m_MatsName.Contains(labelMatInactiveName) ? m_LabelMats[m_MatsName.IndexOf(labelMatInactiveName)] : null;
+                    var labelMatActiveName = EditorHelper.DropdownList(m_target.m_labelMatOn ? m_target.m_labelMatOn.name : "", "Active Mat", m_matsName.ToArray());
+                    m_target.m_labelMatOn = m_matsName.Contains(labelMatActiveName) ? m_labelMats[m_matsName.IndexOf(labelMatActiveName)] : null;
+                    var labelMatInactiveName = EditorHelper.DropdownList(m_target.m_labelMatOff ? m_target.m_labelMatOff.name : "", "Inactive Mat", m_matsName.ToArray());
+                    m_target.m_labelMatOff = m_matsName.Contains(labelMatInactiveName) ? m_labelMats[m_matsName.IndexOf(labelMatInactiveName)] : null;
                     EditorGUILayout.EndVertical();
                     EditorGUI.indentLevel--;
                 }

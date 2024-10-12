@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using RCore.Common;
 using RCore.Inspector;
+using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -24,7 +25,8 @@ namespace RCore.UI
 
         public Image imgBackground;
         public Image imgProgressValue;
-        public TextMeshProUGUI txtProgessValue;
+        [FormerlySerializedAs("txtProgessValue")]
+        public TextMeshProUGUI txtValue;
         public TextMeshProUGUI txtRank;
         /// <summary>
         /// False: image can fill, 
@@ -139,31 +141,31 @@ namespace RCore.UI
         {
             imgBackground.SetActive(pValue);
             imgProgressValue.SetActive(pValue);
-            if (txtProgessValue != null)
-                txtProgessValue.SetActive(pValue);
+            if (txtValue != null)
+                txtValue.SetActive(pValue);
             if (txtRank != null)
                 txtRank.gameObject.SetActive(pValue);
         }
 
         protected virtual void SetProgressDisplay()
         {
-            if (txtProgessValue != null)
-                txtProgessValue.enabled = mMax >= 0;
+            if (txtValue != null)
+                txtValue.enabled = mMax >= 0;
 
             if (isPercent)
             {
-                if (mMax > 0 && txtProgessValue != null)
-                    txtProgessValue.text = $"{Mathf.RoundToInt(mValue / mMax * 100)}%";
+                if (mMax > 0 && txtValue != null)
+                    txtValue.text = $"{Mathf.RoundToInt(mValue / mMax * 100)}%";
             }
             else if (isTimeCountdown)
             {
-                if (mMax > 0 && txtProgessValue != null)
-                    txtProgessValue.text = TimeHelper.FormatHHMMss(mMax - mValue, false);
+                if (mMax > 0 && txtValue != null)
+                    txtValue.text = TimeHelper.FormatHHMMss(mMax - mValue, false);
             }
             else
             {
-                if (mMax >= 0 && txtProgessValue != null)
-                    txtProgessValue.text = $"{mValue}/{mMax}";
+                if (mMax >= 0 && txtValue != null)
+                    txtValue.text = $"{mValue}/{mMax}";
             }
         }
 
@@ -202,8 +204,8 @@ namespace RCore.UI
                 }
             }
 
-            if (txtProgessValue == null)
-                txtProgessValue = imgProgressValue.GetComponentInChildren<TextMeshProUGUI>();
+            if (txtValue == null)
+                txtValue = imgProgressValue.GetComponentInChildren<TextMeshProUGUI>();
 
             //Max = mMax;
             //= mValue;
@@ -225,8 +227,8 @@ namespace RCore.UI
             {
                 base.OnInspectorGUI();
 
-                if (mBar.txtProgessValue != null)
-                    mBar.txtProgessValue.text = EditorGUILayout.TextField("Progress", mBar.txtProgessValue.text);
+                if (mBar.txtValue != null)
+                    mBar.txtValue.text = EditorGUILayout.TextField("Progress", mBar.txtValue.text);
                 if (mBar.txtRank != null)
                     mBar.txtRank.text = EditorGUILayout.TextField("Rank", mBar.txtRank.text);
 

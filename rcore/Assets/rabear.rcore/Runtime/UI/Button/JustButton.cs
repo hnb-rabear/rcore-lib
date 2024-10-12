@@ -8,309 +8,380 @@ using UnityEngine.EventSystems;
 using System;
 using RCore.Common;
 using UnityEngine.Serialization;
+#if UNITY_EDITOR
+using RCore.Common.Editor;
+using UnityEditor;
+using UnityEditor.UI;
+#endif
 
 namespace RCore.UI
 {
-    [AddComponentMenu("RCore/UI/JustButton")]
-    public class JustButton : Button
-    {
-        protected enum PivotForScale
-        {
-            Bot,
-            Top,
-            TopLeft,
-            BotLeft,
-            TopRight,
-            BotRight,
-            Center,
-        }
+	[AddComponentMenu("RCore/UI/JustButton")]
+	public class JustButton : Button
+	{
+		protected enum PivotForScale
+		{
+			Bot,
+			Top,
+			TopLeft,
+			BotLeft,
+			TopRight,
+			BotRight,
+			Center,
+		}
 
-        private static Material m_GreyMat;
+		private static Material m_GreyMat;
 
-        [SerializeField] protected PivotForScale mPivotForFX = PivotForScale.Center;
-        [SerializeField] protected bool mEnabledFX = true;
-        [SerializeField] protected Image mImg;
-        [SerializeField] protected Vector2 mInitialScale = Vector2.one;
-        [SerializeField] protected PerfectRatio m_PerfectRatio = PerfectRatio.Height;
+		[FormerlySerializedAs("mPivotForFX")]
+		[SerializeField] protected PivotForScale m_pivotForScaleBounce = PivotForScale.Center;
+		[FormerlySerializedAs("mEnabledFX")]
+		[SerializeField] protected bool m_scaleBounceEffect = true;
+		[FormerlySerializedAs("mImg")]
+		[SerializeField] protected Image m_img;
+		[FormerlySerializedAs("mInitialScale")]
+		[SerializeField] protected Vector2 m_initialScale = Vector2.one;
+		[FormerlySerializedAs("m_PerfectRatio")]
+		[SerializeField] protected PerfectRatio m_perfectRatio = PerfectRatio.Height;
 
-        [SerializeField] protected bool mGreyMatEnabled;
-        [SerializeField] protected bool mImgSwapEnabled;
-        [SerializeField] public Sprite mImgActive;
-        [SerializeField] public Sprite mImgInactive;
-        [FormerlySerializedAs("m_SFXClip")]
-        [SerializeField] protected string m_SfxClip = "sfx_button_click";
+		[FormerlySerializedAs("mGreyMatEnabled")]
+		[SerializeField] protected bool m_greyscaleEffect;
+		[FormerlySerializedAs("mImgSwapEnabled")]
+		[SerializeField] protected bool m_imgOnOffSwap;
+		[FormerlySerializedAs("mImgActive")]
+		[SerializeField] protected Sprite m_imgOn;
+		[FormerlySerializedAs("mImgInactive")]
+		[SerializeField] protected Sprite m_imgOff;
+		[FormerlySerializedAs("m_SfxClip")]
+		[FormerlySerializedAs("m_SFXClip")]
+		[SerializeField] protected string m_clickSfx;
 
-        public Image img
-        {
-            get
-            {
-                if (mImg == null)
-                    mImg = targetGraphic as Image;
-                return mImg;
-            }
-        }
-        public Material imgMaterial
-        {
-            get => img.material;
-            set => img.material = value;
-        }
-        public RectTransform rectTransform => targetGraphic.rectTransform;
+		public Image img
+		{
+			get
+			{
+				if (m_img == null)
+					m_img = targetGraphic as Image;
+				return m_img;
+			}
+		}
+		public Material imgMaterial { get => img.material; set => img.material = value; }
+		public RectTransform rectTransform => targetGraphic.rectTransform;
 
-        private PivotForScale m_prePivot;
-        private Action m_inactionStateAction;
-        private bool m_active = true;
-        private int m_PerfectSpriteId;
+		private PivotForScale m_prePivot;
+		private Action m_inactionStateAction;
+		private bool m_active = true;
+		private int m_PerfectSpriteId;
 
-        public virtual void SetEnable(bool pValue)
-        {
-            m_active = pValue;
-            enabled = pValue || m_inactionStateAction != null;
-            if (pValue)
-            {
-                if (mImgSwapEnabled)
-                    mImg.sprite = mImgActive;
-                else
-                    imgMaterial = null;
-            }
-            else
-            {
-                if (mImgSwapEnabled)
-                {
-                    mImg.sprite = mImgInactive;
-                }
-                else
-                {
-                    transform.localScale = mInitialScale;
+		public virtual void SetEnable(bool pValue)
+		{
+			m_active = pValue;
+			enabled = pValue || m_inactionStateAction != null;
+			if (pValue)
+			{
+				if (m_imgOnOffSwap)
+					m_img.sprite = m_imgOn;
+				else
+					imgMaterial = null;
+			}
+			else
+			{
+				if (m_imgOnOffSwap)
+				{
+					m_img.sprite = m_imgOff;
+				}
+				else
+				{
+					transform.localScale = m_initialScale;
 
-                    //Use grey material here
-                    if (mGreyMatEnabled)
-                        imgMaterial = GetGreyMat();
-                }
-            }
-        }
+					//Use grey material here
+					if (m_greyscaleEffect)
+						imgMaterial = GetGreyMat();
+				}
+			}
+		}
 
-        public virtual void SetInactiveStateAction(Action pAction)
-        {
-            m_inactionStateAction = pAction;
-            enabled = m_active || m_inactionStateAction != null;
-        }
+		public virtual void SetInactiveStateAction(Action pAction)
+		{
+			m_inactionStateAction = pAction;
+			enabled = m_active || m_inactionStateAction != null;
+		}
 
-        protected override void Start()
-        {
-            base.Start();
+		protected override void Start()
+		{
+			base.Start();
 
-            m_prePivot = mPivotForFX;
-        }
+			m_prePivot = m_pivotForScaleBounce;
+		}
 
-        protected override void OnDisable()
-        {
-            base.OnDisable();
+		protected override void OnDisable()
+		{
+			base.OnDisable();
 
-            if (mEnabledFX)
-                transform.localScale = mInitialScale;
-        }
+			if (m_scaleBounceEffect)
+				transform.localScale = m_initialScale;
+		}
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            if (Application.isPlaying)
-                return;
+		protected override void OnValidate()
+		{
+			if (Application.isPlaying)
+				return;
 
-            base.OnValidate();
+			base.OnValidate();
 
-            if (targetGraphic == null)
-            {
-                var images = gameObject.GetComponentsInChildren<Image>();
-                if (images.Length > 0)
-                {
-                    targetGraphic = images[0];
-                    mImg = (Image)targetGraphic;
-                }
-            }
-            if (targetGraphic != null && mImg == null)
-                mImg = targetGraphic as Image;
+			if (targetGraphic == null)
+			{
+				var images = gameObject.GetComponentsInChildren<Image>();
+				if (images.Length > 0)
+				{
+					targetGraphic = images[0];
+					m_img = (Image)targetGraphic;
+				}
+			}
+			if (targetGraphic != null && m_img == null)
+				m_img = targetGraphic as Image;
 
-            if (transition == Transition.Animation && GetComponent<Animator>() != null)
-            {
-                GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
-                mEnabledFX = false;
-            }
-            
-            if (mEnabledFX)
-                mInitialScale = transform.localScale;
+			if (transition == Transition.Animation && GetComponent<Animator>() != null)
+			{
+				GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
+				m_scaleBounceEffect = false;
+			}
 
-            RefreshPivot();
+			if (m_scaleBounceEffect)
+				m_initialScale = transform.localScale;
 
-            m_PerfectSpriteId = 0;
-            CheckPerfectRatio();
-        }
+			RefreshPivot();
+
+			m_PerfectSpriteId = 0;
+			CheckPerfectRatio();
+		}
 #endif
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
+		protected override void OnEnable()
+		{
+			base.OnEnable();
 
-            if (mEnabledFX)
-                transform.localScale = mInitialScale;
-            
-            if (mImg.sprite != null && m_PerfectSpriteId != mImg.sprite.GetInstanceID())
-                CheckPerfectRatio();
-        }
+			if (m_scaleBounceEffect)
+				transform.localScale = m_initialScale;
 
-        public override void OnPointerDown(PointerEventData eventData)
-        {
-            if (!m_active)
-            {
-                if (m_inactionStateAction != null)
-                {
-                    m_inactionStateAction();
-                    if (TryGetComponent(out Animator component))
-                        component.SetTrigger("Pressed");
-                }
-            }
+			if (m_img.sprite != null && m_PerfectSpriteId != m_img.sprite.GetInstanceID())
+				CheckPerfectRatio();
+		}
 
-            if (m_active)
-            {
-                base.OnPointerDown(eventData);
-                if (!string.IsNullOrEmpty(m_SfxClip))
-                    EventDispatcher.Raise(new Audio.SFXTriggeredEvent(m_SfxClip));
-            }
+		public override void OnPointerDown(PointerEventData eventData)
+		{
+			if (!m_active)
+			{
+				if (m_inactionStateAction != null)
+				{
+					m_inactionStateAction();
+					if (TryGetComponent(out Animator component))
+						component.SetTrigger("Pressed");
+				}
+			}
 
-            if (mEnabledFX)
-            {
-                if (mPivotForFX != m_prePivot)
-                {
-                    m_prePivot = mPivotForFX;
-                    RefreshPivot(rectTransform);
-                }
+			if (m_active)
+			{
+				base.OnPointerDown(eventData);
+				if (!string.IsNullOrEmpty(m_clickSfx))
+					EventDispatcher.Raise(new Audio.SFXTriggeredEvent(m_clickSfx));
+			}
 
-                transform.localScale = mInitialScale * 0.95f;
-            }
-        }
+			if (m_scaleBounceEffect)
+			{
+				if (m_pivotForScaleBounce != m_prePivot)
+				{
+					m_prePivot = m_pivotForScaleBounce;
+					RefreshPivot(rectTransform);
+				}
 
-        public override void OnPointerUp(PointerEventData eventData)
-        {
-            if (m_active)
-                base.OnPointerUp(eventData);
+				transform.localScale = m_initialScale * 0.95f;
+			}
+		}
 
-            if (mEnabledFX)
-            {
-                transform.localScale = mInitialScale;
-            }
-        }
+		public override void OnPointerUp(PointerEventData eventData)
+		{
+			if (m_active)
+				base.OnPointerUp(eventData);
 
-        public override void OnPointerClick(PointerEventData eventData)
-        {
-            if (m_active)
-                base.OnPointerClick(eventData);
-        }
+			if (m_scaleBounceEffect)
+			{
+				transform.localScale = m_initialScale;
+			}
+		}
 
-        public override void OnSelect(BaseEventData eventData)
-        {
-            if (m_active)
-                base.OnSelect(eventData);
-        }
+		public override void OnPointerClick(PointerEventData eventData)
+		{
+			if (m_active)
+				base.OnPointerClick(eventData);
+		}
 
-        public void RefreshPivot()
-        {
-            RefreshPivot(rectTransform);
-        }
+		public override void OnSelect(BaseEventData eventData)
+		{
+			if (m_active)
+				base.OnSelect(eventData);
+		}
 
-        private void RefreshPivot(RectTransform pRect)
-        {
-            switch (mPivotForFX)
-            {
-                case PivotForScale.Bot:
-                    SetPivot(pRect, new Vector2(0.5f, 0));
-                    break;
-                case PivotForScale.BotLeft:
-                    SetPivot(pRect, new Vector2(0, 0));
-                    break;
-                case PivotForScale.BotRight:
-                    SetPivot(pRect, new Vector2(1, 0));
-                    break;
-                case PivotForScale.Top:
-                    SetPivot(pRect, new Vector2(0.5f, 1));
-                    break;
-                case PivotForScale.TopLeft:
-                    SetPivot(pRect, new Vector2(0, 1f));
-                    break;
-                case PivotForScale.TopRight:
-                    SetPivot(pRect, new Vector2(1, 1f));
-                    break;
-                case PivotForScale.Center:
-                    SetPivot(pRect, new Vector2(0.5f, 0.5f));
-                    break;
-            }
-        }
+		public void RefreshPivot()
+		{
+			RefreshPivot(rectTransform);
+		}
 
-        public void SetPivot(RectTransform pRectTransform, Vector2 pivot)
-        {
-            if (pRectTransform == null) return;
+		private void RefreshPivot(RectTransform pRect)
+		{
+			switch (m_pivotForScaleBounce)
+			{
+				case PivotForScale.Bot:
+					SetPivot(pRect, new Vector2(0.5f, 0));
+					break;
+				case PivotForScale.BotLeft:
+					SetPivot(pRect, new Vector2(0, 0));
+					break;
+				case PivotForScale.BotRight:
+					SetPivot(pRect, new Vector2(1, 0));
+					break;
+				case PivotForScale.Top:
+					SetPivot(pRect, new Vector2(0.5f, 1));
+					break;
+				case PivotForScale.TopLeft:
+					SetPivot(pRect, new Vector2(0, 1f));
+					break;
+				case PivotForScale.TopRight:
+					SetPivot(pRect, new Vector2(1, 1f));
+					break;
+				case PivotForScale.Center:
+					SetPivot(pRect, new Vector2(0.5f, 0.5f));
+					break;
+			}
+		}
 
-            var size = pRectTransform.rect.size;
-            var deltaPivot = pRectTransform.pivot - pivot;
-            var deltaPosition = new Vector3(deltaPivot.x * size.x, deltaPivot.y * size.y);
-            pRectTransform.pivot = pivot;
-            pRectTransform.localPosition -= deltaPosition;
-        }
+		public void SetPivot(RectTransform pRectTransform, Vector2 pivot)
+		{
+			if (pRectTransform == null) return;
 
-        public Material GetGreyMat()
-        {
-            if (m_GreyMat == null)
-                //mGreyMat = new Material(Shader.Find("NBCustom/Sprites/Greyscale"));
-                m_GreyMat = Resources.Load<Material>("Greyscale");
-            return m_GreyMat;
-        }
+			var size = pRectTransform.rect.size;
+			var deltaPivot = pRectTransform.pivot - pivot;
+			var deltaPosition = new Vector3(deltaPivot.x * size.x, deltaPivot.y * size.y);
+			pRectTransform.pivot = pivot;
+			pRectTransform.localPosition -= deltaPosition;
+		}
 
-        public void EnableGrey(bool pValue)
-        {
-            mGreyMatEnabled = pValue;
-        }
+		public Material GetGreyMat()
+		{
+			if (m_GreyMat == null)
+				//mGreyMat = new Material(Shader.Find("NBCustom/Sprites/Greyscale"));
+				m_GreyMat = Resources.Load<Material>("Greyscale");
+			return m_GreyMat;
+		}
 
-        public bool Enabled() { return enabled && m_active; }
-        
-        public void SetActiveSprite(Sprite pSprite)
-        {
-            mImgActive = pSprite;
-        }
+		public void EnableGrey(bool pValue)
+		{
+			m_greyscaleEffect = pValue;
+		}
 
-        protected void CheckPerfectRatio()
-        {
-            if (m_PerfectRatio == PerfectRatio.Width)
-            {
-                var image1 = mImg;
-                if (image1 != null && image1.sprite != null && image1.type == Image.Type.Sliced && m_PerfectSpriteId != image1.sprite.GetInstanceID())
-                {
-                    var nativeSize = image1.sprite.NativeSize();
-                    var rectSize = rectTransform.sizeDelta;
-                    if (rectSize.x > 0 && rectSize.x < nativeSize.x)
-                    {
-                        var ratio = nativeSize.x * 1f / rectSize.x;
-                        image1.pixelsPerUnitMultiplier = ratio;
-                    }
-                    else
-                        image1.pixelsPerUnitMultiplier = 1;
-                    m_PerfectSpriteId = image1.sprite.GetInstanceID();
-                }
-            }
-            else if (m_PerfectRatio == PerfectRatio.Height)
-            {
-                var image1 = mImg;
-                if (image1 != null && image1.sprite != null && image1.type == Image.Type.Sliced && m_PerfectSpriteId != image1.sprite.GetInstanceID())
-                {
-                    var nativeSize = image1.sprite.NativeSize();
-                    var rectSize = rectTransform.sizeDelta;
-                    if (rectSize.y > 0 && rectSize.y < nativeSize.y)
-                    {
-                        var ratio = nativeSize.y * 1f / rectSize.y;
-                        image1.pixelsPerUnitMultiplier = ratio;
-                    }
-                    else
-                        image1.pixelsPerUnitMultiplier = 1;
-                    m_PerfectSpriteId = image1.sprite.GetInstanceID();
-                }
-            }
-        }
-    }
+		public bool Enabled()
+		{
+			return enabled && m_active;
+		}
+
+		public void SetActiveSprite(Sprite pSprite)
+		{
+			m_imgOn = pSprite;
+		}
+
+		protected void CheckPerfectRatio()
+		{
+			if (m_perfectRatio == PerfectRatio.Width)
+			{
+				var image1 = m_img;
+				if (image1 != null && image1.sprite != null && image1.type == Image.Type.Sliced && m_PerfectSpriteId != image1.sprite.GetInstanceID())
+				{
+					var nativeSize = image1.sprite.NativeSize();
+					var rectSize = rectTransform.sizeDelta;
+					if (rectSize.x > 0 && rectSize.x < nativeSize.x)
+					{
+						var ratio = nativeSize.x * 1f / rectSize.x;
+						image1.pixelsPerUnitMultiplier = ratio;
+					}
+					else
+						image1.pixelsPerUnitMultiplier = 1;
+					m_PerfectSpriteId = image1.sprite.GetInstanceID();
+				}
+			}
+			else if (m_perfectRatio == PerfectRatio.Height)
+			{
+				var image1 = m_img;
+				if (image1 != null && image1.sprite != null && image1.type == Image.Type.Sliced && m_PerfectSpriteId != image1.sprite.GetInstanceID())
+				{
+					var nativeSize = image1.sprite.NativeSize();
+					var rectSize = rectTransform.sizeDelta;
+					if (rectSize.y > 0 && rectSize.y < nativeSize.y)
+					{
+						var ratio = nativeSize.y * 1f / rectSize.y;
+						image1.pixelsPerUnitMultiplier = ratio;
+					}
+					else
+						image1.pixelsPerUnitMultiplier = 1;
+					m_PerfectSpriteId = image1.sprite.GetInstanceID();
+				}
+			}
+		}
+
+#if UNITY_EDITOR
+
+		[CanEditMultipleObjects]
+		[CustomEditor(typeof(JustButton), true)]
+		public class JustButtonEditor : ButtonEditor
+		{
+			public override void OnInspectorGUI()
+			{
+				base.OnInspectorGUI();
+
+				EditorGUILayout.BeginVertical("box");
+				{
+					EditorHelper.SerializeField(serializedObject, "m_img");
+					EditorHelper.SerializeField(serializedObject, "m_pivotForScaleBounce");
+					EditorHelper.SerializeField(serializedObject, "m_scaleBounceEffect");
+					EditorHelper.SerializeField(serializedObject, "m_greyscaleEffect");
+					EditorHelper.SerializeField(serializedObject, "m_clickSfx");
+					EditorHelper.SerializeField(serializedObject, "m_perfectRatio");
+					var imgSwapEnabled = EditorHelper.SerializeField(serializedObject, "m_imgOnOffSwap");
+					if (imgSwapEnabled.boolValue)
+					{
+						EditorGUI.indentLevel++;
+						EditorGUILayout.BeginVertical("box");
+						EditorHelper.SerializeField(serializedObject, "m_imgOn");
+						EditorHelper.SerializeField(serializedObject, "m_imgOff");
+						EditorGUILayout.EndVertical();
+						EditorGUI.indentLevel--;
+					}
+				}
+				EditorGUILayout.EndVertical();
+				EditorGUILayout.Space();
+				serializedObject.ApplyModifiedProperties();
+			}
+
+			[MenuItem("RCore/UI/Replace Button By JustButton")]
+			private static void ReplaceButton()
+			{
+				var gameObjects = Selection.gameObjects;
+				for (int i = 0; i < gameObjects.Length; i++)
+				{
+					var buttons = gameObjects[i].GetComponentsInChildren<UnityEngine.UI.Button>(true);
+					for (int j = 0; j < buttons.Length; j++)
+					{
+						var btn = buttons[j];
+						if (btn is not JustButton)
+						{
+							var obj = btn.gameObject;
+							DestroyImmediate(btn);
+							obj.AddComponent<JustButton>();
+						}
+					}
+				}
+			}
+		}
+
+#endif
+	}
 }

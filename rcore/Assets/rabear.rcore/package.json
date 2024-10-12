@@ -4,9 +4,13 @@
   "displayName": "RCore",
   "description": "",
   "unity": "2022.3",
-    "author": {
+  "author": {
     "name": "HungNB",
     "email": "nbhung71711@gmail.com",
     "url": "https://github.com/hnb-rabear"
+  },
+  "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.unity.addressables": "^1.22.2"
   }
 }

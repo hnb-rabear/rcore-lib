@@ -13,9 +13,6 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using TMPro;
 using UnityEditor;
-#if ADDRESSABLES
-using UnityEditor.AddressableAssets;
-#endif
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
@@ -846,10 +843,14 @@ namespace RCore.Common.Editor
                 if (pFixedWidth > 0) style.fixedWidth = pFixedWidth;
                 if (pFixedHeight > 0) style.fixedHeight = pFixedHeight;
                 rect = EditorGUILayout.BeginVertical(style);
+                EditorGUI.indentLevel++;
             }
 
             doSomething();
-
+            
+            if (isBox)
+	            EditorGUI.indentLevel--;
+            
             EditorGUILayout.EndVertical();
             if (color != default)
                 GUI.backgroundColor = defaultColor;
@@ -2580,19 +2581,6 @@ namespace RCore.Common.Editor
 
 #region Misc
 
-        public static string[] GetTMPMaterialPresets(TMPro.TMP_FontAsset fontAsset)
-        {
-            if (fontAsset == null) return null;
-
-            var materialReferences = TMPro.EditorUtilities.TMP_EditorUtility.FindMaterialReferences(fontAsset);
-            var materialPresetNames = new string[materialReferences.Length];
-
-            for (int i = 0; i < materialPresetNames.Length; i++)
-                materialPresetNames[i] = materialReferences[i].name;
-
-            return materialPresetNames;
-        }
-
         private static Dictionary<string, HashSet<string>> m_InverseReferenceMap;
         private static int m_ReferencesCount;
 
@@ -3175,6 +3163,18 @@ namespace RCore.Common.Editor
             return true;
         }
 
+        public static void DrawAssetsList<T>(AssetsList<T> assets, string pDisplayName, bool @readonly = false, List<string> labels = null) where T : Object
+        {
+	        bool showBox = assets.defaultAsset is Sprite;
+	        var draw = new EditorObject<T>()
+	        {
+		        value = assets.defaultAsset,
+		        label = "Default",
+	        };
+	        if (ListObjects(pDisplayName, ref assets.source, labels, showBox, @readonly, new IDraw[] { draw }))
+		        assets.defaultAsset = (T)draw.OutputValue;
+        }
+        
 #endregion
     }
 

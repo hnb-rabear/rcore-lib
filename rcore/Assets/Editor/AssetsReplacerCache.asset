@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ca7b5c7604dfe4dab4cada5633bed8, type: 3}
+  m_Name: AssetsReplacerCache
+  m_EditorClassIdentifier: 
+  spritesReplacer:
+    m_sourceObjects: []
+    m_inputs: []
+    m_displayIcon: 0
+    m_tpsSaveFile: {fileID: 0}
+    m_findSameName: 1
+    m_findSpritesInPrefab: 0
+    m_findSpritesInTexture: 1
+    m_detectNamePattern: 0
+    m_tps: 0
+    m_displayNullR: 0
+  spritesCutter:
+    m_spriteSheets: []
+    m_renameSprites: 0
+    m_spriteNamePattern: 
+    m_stringRemovedInName: 
+    m_prefix: 
+    m_suffix: 
+    m_RenameOrigin: 0
+  objectsReplacer:
+    m_inputs: []

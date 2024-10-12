@@ -6,4 +6,11 @@ namespace RCore.Common
 		No = 1,
 		Yes = 2,
 	}
+	
+	public enum PerfectRatio
+	{
+		None,
+		Width,
+		Height,
+	}
 }

@@ -3,7 +3,6 @@
 **/
 
 #if UNITY_EDITOR
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2768,6 +2767,30 @@ namespace RCore.Common.Editor
                 AssetDatabase.Refresh();
         }
 
+        [Serializable]
+        public struct Vector2Parse
+        {
+	        public float x;
+	        public float y;
+        }
+        
+        [Serializable]
+        public struct Vector3Parse
+        {
+	        public float x;
+	        public float y;
+	        public float z;
+        }
+        
+        [Serializable]
+        public struct Vector4Parse
+        {
+	        public float x;
+	        public float y;
+	        public float z;
+	        public float w;
+        }
+        
         public struct SpriteInfo
         {
             public string name;
@@ -2807,18 +2830,18 @@ namespace RCore.Common.Editor
                 var pivots = new List<Vector2>();
                 foreach (var line in pivotLines)
                 {
-                    var pivotStr = line.Replace("pivot: ", "").Trim();
-                    var pivot = JsonConvert.DeserializeObject<Vector2>(pivotStr);
-                    pivots.Add(pivot);
+	                var pivotStr = line.Replace("pivot: ", "").Trim();
+	                var pivot = JsonUtility.FromJson<Vector2Parse>(pivotStr);
+	                pivots.Add(new Vector2(pivot.x, pivot.y));
                 }
 
                 var borders = new List<Vector4>();
                 var borderLines = lines.Where(line => line.Trim().StartsWith("border:", StringComparison.OrdinalIgnoreCase)).ToList();
                 foreach (var line in borderLines)
                 {
-                    var borderStr = line.Replace("border: ", "").Trim();
-                    var border = JsonConvert.DeserializeObject<Vector4>(borderStr);
-                    borders.Add(border);
+	                var borderStr = line.Replace("border: ", "").Trim();
+	                var border = JsonUtility.FromJson<Vector4Parse>(borderStr);
+	                borders.Add(new Vector4(border.x, border.y, border.z, border.w));
                 }
                 for (int i = 0; i < names.Count; i++)
                     results.Add(names[i], new SpriteInfo
@@ -2837,17 +2860,17 @@ namespace RCore.Common.Editor
 
                 var pivotLine = lines.First(line => line.Trim().StartsWith("spritePivot: ", StringComparison.OrdinalIgnoreCase));
                 var pivotStr = pivotLine.Replace("spritePivot: ", "").Trim();
-                var pivot = JsonConvert.DeserializeObject<Vector2>(pivotStr);
+                var pivot = JsonUtility.FromJson<Vector2Parse>(pivotStr);
 
                 var borderStr = lines.First(line => line.Trim().StartsWith("spriteBorder: ", StringComparison.OrdinalIgnoreCase));
-                var border = JsonConvert.DeserializeObject<Vector4>(borderStr);
+                var border = JsonUtility.FromJson<Vector4Parse>(borderStr);
 
                 results.Add(pSpriteFrom.name, new SpriteInfo
                 {
-                    name = pSpriteFrom.name,
-                    pivot = pivot,
-                    border = border,
-                    alignment = alignment,
+	                name = pSpriteFrom.name,
+	                pivot = new Vector2(pivot.x, pivot.y),
+	                border = new Vector4(border.x, border.y, border.z, border.w),
+	                alignment = alignment,
                 });
             }
             return results;

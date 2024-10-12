@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 #endif
 
-namespace RCore.Components
+namespace RCore.UI
 {
     public class CustomToggleGroup : ToggleGroup
     {

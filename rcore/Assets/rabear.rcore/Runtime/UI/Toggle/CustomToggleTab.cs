@@ -19,7 +19,7 @@ using UnityEditor;
 using DG.Tweening;
 #endif
 
-namespace RCore.Components
+namespace RCore.UI
 {
     [AddComponentMenu("RCore/UI/CustomToggleTab")]
     public class CustomToggleTab : Toggle

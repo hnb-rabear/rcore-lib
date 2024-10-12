@@ -10,7 +10,7 @@ using TMPro;
 using RCore.Common.Editor;
 #endif
 
-namespace RCore.Components
+namespace RCore.UI
 {
     [AddComponentMenu("RCore/UI/CustomToggleSlider")]
     public class CustomToggleSlider : Toggle

@@ -2,7 +2,7 @@
 * Author RadBear - nbhung71711 @gmail.com - 2017
 **/
 
-#if USE_DOTWEEN
+#if DOTWEEN
 using DG.Tweening;
 #endif
 using System;
@@ -750,7 +750,7 @@ namespace RCore.Common
 
 		public static void FillSmooth(this UnityEngine.UI.Image pImage, float pFill, float durationFull, float durationMin)
 		{
-#if USE_DOTWEEN
+#if DOTWEEN
 			if (Application.isPlaying && durationFull > 0 && pImage.fillAmount != pFill)
 			{
 				float previousFill = pImage.fillAmount;

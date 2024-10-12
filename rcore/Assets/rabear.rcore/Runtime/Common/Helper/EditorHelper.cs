@@ -2766,30 +2766,6 @@ namespace RCore.Common.Editor
             if (pRefreshDatabase)
                 AssetDatabase.Refresh();
         }
-
-        [Serializable]
-        public struct Vector2Parse
-        {
-	        public float x;
-	        public float y;
-        }
-        
-        [Serializable]
-        public struct Vector3Parse
-        {
-	        public float x;
-	        public float y;
-	        public float z;
-        }
-        
-        [Serializable]
-        public struct Vector4Parse
-        {
-	        public float x;
-	        public float y;
-	        public float z;
-	        public float w;
-        }
         
         public struct SpriteInfo
         {
@@ -2831,7 +2807,7 @@ namespace RCore.Common.Editor
                 foreach (var line in pivotLines)
                 {
 	                var pivotStr = line.Replace("pivot: ", "").Trim();
-	                var pivot = JsonUtility.FromJson<Vector2Parse>(pivotStr);
+	                var pivot = JsonUtility.FromJson<RVector2>(pivotStr);
 	                pivots.Add(new Vector2(pivot.x, pivot.y));
                 }
 
@@ -2840,7 +2816,7 @@ namespace RCore.Common.Editor
                 foreach (var line in borderLines)
                 {
 	                var borderStr = line.Replace("border: ", "").Trim();
-	                var border = JsonUtility.FromJson<Vector4Parse>(borderStr);
+	                var border = JsonUtility.FromJson<RVector4>(borderStr);
 	                borders.Add(new Vector4(border.x, border.y, border.z, border.w));
                 }
                 for (int i = 0; i < names.Count; i++)
@@ -2860,10 +2836,10 @@ namespace RCore.Common.Editor
 
                 var pivotLine = lines.First(line => line.Trim().StartsWith("spritePivot: ", StringComparison.OrdinalIgnoreCase));
                 var pivotStr = pivotLine.Replace("spritePivot: ", "").Trim();
-                var pivot = JsonUtility.FromJson<Vector2Parse>(pivotStr);
+                var pivot = JsonUtility.FromJson<RVector2>(pivotStr);
 
                 var borderStr = lines.First(line => line.Trim().StartsWith("spriteBorder: ", StringComparison.OrdinalIgnoreCase));
-                var border = JsonUtility.FromJson<Vector4Parse>(borderStr);
+                var border = JsonUtility.FromJson<RVector4>(borderStr);
 
                 results.Add(pSpriteFrom.name, new SpriteInfo
                 {

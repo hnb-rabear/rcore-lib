@@ -12,22 +12,23 @@ namespace RCore.UI
 	[AddComponentMenu("RCore/UI/SimpleTMPButton")]
 	public class SimpleTMPButton : JustButton
 	{
-		[SerializeField] protected TextMeshProUGUI mLabelTMP;
+		[FormerlySerializedAs("mLabelTMP")]
+		[SerializeField] protected TextMeshProUGUI m_label;
 
-		public TextMeshProUGUI labelTMP
+		public TextMeshProUGUI Label
 		{
 			get
 			{
-				if (mLabelTMP == null && !mFindLabel)
+				if (m_label == null && !m_findLabel)
 				{
-					mLabelTMP = GetComponentInChildren<TextMeshProUGUI>();
-					mFindLabel = true;
+					m_label = GetComponentInChildren<TextMeshProUGUI>();
+					m_findLabel = true;
 				}
-				return mLabelTMP;
+				return m_label;
 			}
 		}
 
-		private bool mFindLabel;
+		private bool m_findLabel;
 
 		[FormerlySerializedAs("mFontColorSwap")]
 		[SerializeField] protected bool m_fontColorOnOffSwap;
@@ -49,9 +50,9 @@ namespace RCore.UI
 		{
 			base.OnValidate();
 
-			if (mLabelTMP == null)
-				mLabelTMP = GetComponentInChildren<TextMeshProUGUI>();
-			if (mLabelTMP == null)
+			if (m_label == null)
+				m_label = GetComponentInChildren<TextMeshProUGUI>();
+			if (m_label == null)
 				m_labelMatOnOffSwap = false;
 			if (!m_labelMatOnOffSwap)
 			{
@@ -60,7 +61,7 @@ namespace RCore.UI
 			}
 			else if (m_labelMatOn == null)
 			{
-				m_labelMatOn = mLabelTMP.fontSharedMaterial;
+				m_labelMatOn = m_label.fontSharedMaterial;
 			}
 		}
 #endif
@@ -72,13 +73,13 @@ namespace RCore.UI
 			if (pValue)
 			{
 				if (m_fontColorOnOffSwap)
-					mLabelTMP.color = m_fontColorOn;
+					m_label.color = m_fontColorOn;
 				if (m_labelMatOnOffSwap && m_labelMatOn != null && m_labelMatOff != null)
 				{
 					var labels = gameObject.FindComponentsInChildren<TextMeshProUGUI>();
 					foreach (var label in labels)
 					{
-						if (label.font == mLabelTMP.font && label.fontSharedMaterial == mLabelTMP.fontSharedMaterial)
+						if (label.font == m_label.font && label.fontSharedMaterial == m_label.fontSharedMaterial)
 							label.fontSharedMaterial = m_labelMatOn;
 					}
 				}
@@ -86,13 +87,13 @@ namespace RCore.UI
 			else
 			{
 				if (m_fontColorOnOffSwap)
-					mLabelTMP.color = m_fontColorOff;
+					m_label.color = m_fontColorOff;
 				if (m_labelMatOnOffSwap && m_labelMatOn != null && m_labelMatOff != null)
 				{
 					var labels = gameObject.FindComponentsInChildren<TextMeshProUGUI>();
 					foreach (var label in labels)
 					{
-						if (label.font == mLabelTMP.font && label.fontSharedMaterial == mLabelTMP.fontSharedMaterial)
+						if (label.font == m_label.font && label.fontSharedMaterial == m_label.fontSharedMaterial)
 							label.fontSharedMaterial = m_labelMatOff;
 					}
 				}

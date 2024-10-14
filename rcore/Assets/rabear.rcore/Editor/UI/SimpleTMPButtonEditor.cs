@@ -23,9 +23,9 @@ namespace RCore.UI.Editor
             m_target = (SimpleTMPButton)target;
             m_matsName = Array.Empty<string>();
             m_labelMats = Array.Empty<Material>();
-            if (m_target.labelTMP != null)
+            if (m_target.Label != null)
             {
-                m_labelMats = TMPro.EditorUtilities.TMP_EditorUtility.FindMaterialReferences(m_target.labelTMP.font);
+                m_labelMats = TMPro.EditorUtilities.TMP_EditorUtility.FindMaterialReferences(m_target.Label.font);
                 m_matsName = new string[m_labelMats.Length];
                 for (int i = 0; i < m_labelMats.Length; i++)
                     m_matsName[i] = m_labelMats[i].name;
@@ -62,7 +62,7 @@ namespace RCore.UI.Editor
                     EditorGUI.indentLevel--;
                 }
 
-                var label = EditorHelper.SerializeField(serializedObject, "mLabelTMP");
+                var label = EditorHelper.SerializeField(serializedObject, "m_label");
                 var text = label.objectReferenceValue as TextMeshProUGUI;
                 if (text != null)
                 {

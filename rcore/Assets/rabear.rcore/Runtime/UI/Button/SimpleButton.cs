@@ -12,9 +12,8 @@ namespace RCore.UI
 	public class SimpleButton : JustButton
 	{
 		[FormerlySerializedAs("mLabel")]
-		[SerializeField]
-		protected Text m_label;
-		public Text label
+		[SerializeField] protected Text m_label;
+		public Text Label
 		{
 			get
 			{

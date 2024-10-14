@@ -16,7 +16,7 @@ namespace RCore.Framework.Data
 {
 	public class DataManager : MonoBehaviour
 	{
-		#region Members
+#region Members
 
 		private const float MIN_TIME_BETWEEN_SAVES = 5;
 
@@ -28,11 +28,11 @@ namespace RCore.Framework.Data
 		private Dictionary<string, List<DataGroup>> m_mainGroups = new Dictionary<string, List<DataGroup>>();
 		private Coroutine m_saveCoroutine;
 
-		#endregion
+#endregion
 
 		//===========================================
 
-		#region MonoBehaviour
+#region MonoBehaviour
 
 		public void OnApplicationPause(bool paused)
 		{
@@ -52,11 +52,11 @@ namespace RCore.Framework.Data
 			Save(true);
 		}
 
-		#endregion
+#endregion
 
 		//===========================================
 
-		#region Public
+#region Public
 
 		/// <summary>
 		/// Step 0: Preparation, add all main data groups to the manager
@@ -147,11 +147,11 @@ namespace RCore.Framework.Data
 			m_EnabledAutoSave = pValue;
 		}
 
-		#endregion
+#endregion
 
 		//=================================================
 
-		#region Private
+#region Private
 
 		/// <summary>
 		/// Step 2: Load Data Saver
@@ -173,11 +173,11 @@ namespace RCore.Framework.Data
 					g.PostLoad();
 		}
 
-		#endregion
+#endregion
 
 		//=================================================
 
-		#region Utilities
+#region Utilities
 
 		public static string LoadFile(string pPath, IEncryption pEncryption)
 		{
@@ -197,7 +197,7 @@ namespace RCore.Framework.Data
 			return "";
 		}
 
-		#endregion
+#endregion
 	}
 #if UNITY_EDITOR
 	[CustomEditor(typeof(DataManager), true)]
@@ -220,8 +220,9 @@ namespace RCore.Framework.Data
 			}
 			if (GUILayout.Button("Back Up"))
 			{
-				string path = EditorUtility.SaveFilePanelInProject("Save Backup", "GameData_" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_")
-							+ ".txt", "txt", "Please enter a file name to save!");
+				string path = EditorUtility.SaveFilePanelInProject("Save Backup", "GameData_"
+					+ DateTime.Now.ToString().Replace("/", "_").Replace(":", "_")
+					+ ".txt", "txt", "Please enter a file name to save!");
 				if (!string.IsNullOrEmpty(path))
 					DataSaverContainer.BackupData(path);
 			}

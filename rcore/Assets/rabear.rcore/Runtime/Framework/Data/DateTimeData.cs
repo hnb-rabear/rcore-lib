@@ -25,6 +25,11 @@ namespace RCore.Framework.Data
         public void Set(DateTime time)
         {
             int timestamp = time.ToUnixTimestampInt();
+            Set(timestamp);
+        }
+        
+        public void Set(int timestamp)
+        {
             if (timestamp == m_value)
                 return;
             m_value = timestamp;

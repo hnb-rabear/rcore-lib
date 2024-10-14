@@ -389,6 +389,25 @@ namespace RCore.Common
 				return (T)formatter.Deserialize(stream);
 			}
 		}
+		
+		public static int GetVersionCode()
+		{
+#if UNITY_ANDROID
+			try
+			{
+				var contextCls = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+				var context = contextCls.GetStatic<AndroidJavaObject>("currentActivity");
+				var packageMngr = context.Call<AndroidJavaObject>("getPackageManager");
+				string packageName = context.Call<string>("getPackageName");
+				var packageInfo = packageMngr.Call<AndroidJavaObject>("getPackageInfo", packageName, 0);
+				return packageInfo.Get<int>("versionCode");
+			}
+			catch
+			{
+				return 0;
+			}
+#endif
+		}
 	}
 
 	public static class RUtilExtension

@@ -6,6 +6,7 @@ using RCore.Common.Editor;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -208,8 +209,6 @@ namespace RCore.Common
     [Serializable]
     public class CustomPool<T> where T : Component
     {
-#region Members
-
         public Action<T> onSpawn;
 
         [SerializeField] protected T m_Prefab;
@@ -231,12 +230,6 @@ namespace RCore.Common
 
         public List<T> ActiveList() => m_ActiveList;
         public List<T> InactiveList() => m_InactiveList;
-
-#endregion
-
-        //====================================
-
-#region Public
 
         public CustomPool() { }
 
@@ -314,49 +307,7 @@ namespace RCore.Common
 
         public T Spawn(Vector3 position, bool pIsWorldPosition)
         {
-            if (m_LimitNumber > 0 && m_ActiveList.Count == m_LimitNumber)
-            {
-                var activeItem = m_ActiveList[0];
-                m_InactiveList.Add(activeItem);
-                m_ActiveList.Remove(activeItem);
-            }
-
-            int count = m_InactiveList.Count;
-            if (m_AutoRelocate && count == 0)
-                RelocateInactive();
-
-            if (count > 0)
-            {
-                var item = m_InactiveList[m_InactiveList.Count - 1];
-                if (pIsWorldPosition)
-                    item.transform.position = position;
-                else
-                    item.transform.localPosition = position;
-                Active(item, true, m_InactiveList.Count - 1);
-
-                onSpawn?.Invoke(item);
-
-                if (m_PushToLastSibling)
-                    item.transform.SetAsLastSibling();
-                return item;
-            }
-
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                T newItem = (T)UnityEditor.PrefabUtility.InstantiatePrefab(m_Prefab, m_Parent);
-                newItem.name = m_Name;
-                m_InactiveList.Add(newItem);
-            }
-            else
-#endif
-            {
-                T newItem = Object.Instantiate(m_Prefab, m_Parent);
-                newItem.name = m_Name;
-                m_InactiveList.Add(newItem);
-            }
-
-            return Spawn(position, pIsWorldPosition);
+            return Spawn(position, pIsWorldPosition, out _);
         }
 
         public T Spawn(Vector3 position, bool pIsWorldPosition, out bool pReused)
@@ -370,16 +321,20 @@ namespace RCore.Common
 
             int count = m_InactiveList.Count;
             if (m_AutoRelocate && count == 0)
-                RelocateInactive();
+            {
+                RelocateInactive(out bool relocated);
+                if (relocated)
+                    count = m_InactiveList.Count;
+            }
 
             if (count > 0)
             {
-                var item = m_InactiveList[m_InactiveList.Count - 1];
+                var item = m_InactiveList[count - 1];
                 if (pIsWorldPosition)
                     item.transform.position = position;
                 else
                     item.transform.localPosition = position;
-                Active(item, true, m_InactiveList.Count - 1);
+                Active(item, true, count - 1);
                 pReused = true;
 
                 onSpawn?.Invoke(item);
@@ -417,9 +372,6 @@ namespace RCore.Common
 
         public void AddOutsider(T pInSceneObj)
         {
-            m_InactiveList ??= new List<T>();
-            m_ActiveList ??= new List<T>();
-
             if (m_InactiveList.Contains(pInSceneObj)
                 || m_ActiveList.Contains(pInSceneObj))
                 return;
@@ -509,7 +461,8 @@ namespace RCore.Common
 
         public void ReleaseAll()
         {
-            for (int i = 0; i < m_ActiveList.Count; i++)
+            int count = m_ActiveList.Count;
+            for (int i = 0; i < count; i++)
             {
                 var item = m_ActiveList[i];
                 m_InactiveList.Add(item);
@@ -520,24 +473,15 @@ namespace RCore.Common
 
         public void DestroyAll()
         {
-            while (m_ActiveList.Count > 0)
+            foreach (var item in m_ActiveList.Concat(m_InactiveList))
             {
-                int index = m_ActiveList.Count - 1;
                 if (Application.isPlaying)
-                    Object.Destroy(m_ActiveList[index].gameObject);
+                    Object.Destroy(item.gameObject);
                 else
-                    Object.DestroyImmediate(m_ActiveList[index].gameObject);
-                m_ActiveList.RemoveAt(index);
+                    Object.DestroyImmediate(item.gameObject);
             }
-            while (m_InactiveList.Count > 0)
-            {
-                int index = m_InactiveList.Count - 1;
-                if (Application.isPlaying)
-                    Object.Destroy(m_InactiveList[index].gameObject);
-                else
-                    Object.DestroyImmediate(m_InactiveList[index].gameObject);
-                m_InactiveList.RemoveAt(index);
-            }
+            m_ActiveList.Clear();
+            m_InactiveList.Clear();
         }
 
         public void Destroy(T pItem)
@@ -600,11 +544,16 @@ namespace RCore.Common
             return null;
         }
 
-        public void RelocateInactive()
+        private void RelocateInactive(out bool relocated)
         {
-            for (int i = m_ActiveList.Count - 1; i >= 0; i--)
+            relocated = false;
+            int count = m_ActiveList.Count;
+            for (int i = count - 1; i >= 0; i--)
                 if (!m_ActiveList[i].gameObject.activeSelf)
+                {
                     Active(m_ActiveList[i], false, i);
+                    relocated = true;
+                }
         }
 
         public void SetParent(Transform pParent)
@@ -616,12 +565,6 @@ namespace RCore.Common
         {
             m_Name = pName;
         }
-
-#endregion
-
-        //========================================
-
-#region Private
 
         private void Active(T pItem, bool pValue, int index = -1)
         {
@@ -644,10 +587,6 @@ namespace RCore.Common
             pItem.SetActive(pValue);
         }
 
-#endregion
-
-        //=========================================
-
 #if UNITY_EDITOR
         public void DrawOnEditor()
         {
@@ -659,8 +598,6 @@ namespace RCore.Common
                         EditorHelper.ListReadonlyObjects(m_Name + "ActiveList", m_ActiveList, null, false);
                     if (m_InactiveList != null)
                         EditorHelper.ListReadonlyObjects(m_Name + "InactiveList", m_InactiveList, null, false);
-                    if (EditorHelper.Button("Relocate"))
-                        RelocateInactive();
                 }, Color.white, true);
             }
         }

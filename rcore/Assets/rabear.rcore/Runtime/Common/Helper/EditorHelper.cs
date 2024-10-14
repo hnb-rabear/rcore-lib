@@ -676,6 +676,34 @@ namespace RCore.Common.Editor
             return pObj;
         }
 
+        public static string GetBuildName()
+        {
+            bool developmentBuild = EditorUserBuildSettings.development;
+            string bundleVersion = PlayerSettings.bundleVersion;
+            string identifier = Application.identifier;
+
+            var idParts = identifier.Split('.');
+            string name = string.IsNullOrEmpty(identifier) ? "" : $"{idParts[idParts.Length - 1]}_";
+            string version = string.IsNullOrEmpty(bundleVersion) ? "" : $"v{bundleVersion}_";
+            string bundleCode = "";
+#if UNITY_ANDROID
+            int bundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+            bundleCode = bundleVersionCode == 0 ? "" : $"b{bundleVersionCode}_";
+#elif UNITY_IOS
+            string buildNumber = PlayerSettings.iOS.buildNumber;
+            bundleCode = $"b{buildNumber}_";
+#endif
+            const string NAME_BUILD_PATTERN = "#ProductName#Version#BundleCode#Time";
+            var time = DateTime.Now;
+            string file = NAME_BUILD_PATTERN.Replace("#ProductName", name)
+                .Replace("#Version", version)
+                .Replace("#BundleCode", bundleCode)
+                .Replace("#Time", $"{time.Year % 100}{time.Month:00}{time.Day:00}_{time.Hour:00}h{time.Minute:00}");
+            file = file.Replace(" ", "_").Replace("/", "-").Replace(":", "-");
+            file += developmentBuild ? "_dev" : "";
+            return file;
+        }
+        
 #endregion
 
         //========================================

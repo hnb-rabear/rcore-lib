@@ -9,6 +9,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using RCore.Common.Editor;
+using System;
 using EditorPrefs = UnityEditor.EditorPrefs;
 
 namespace RCore.Editor
@@ -38,10 +39,14 @@ namespace RCore.Editor
 		private ProfilesCollection m_profileCollections;
 		private bool m_removingProfile;
 		private bool m_previewingProfiles;
+		private string m_buildName;
+		private float m_lastUpdateTime;
 		private readonly Dictionary<string, ReorderableList> m_reorderDirectivesDict = new Dictionary<string, ReorderableList>();
 
 		private void OnEnable()
 		{
+			EditorApplication.update += UpdateEditor;
+			
 			m_target = DevSetting.Instance;
 			if (m_profileCollections == null)
 				m_profileCollections = ProfilesCollection.LoadOrCreateCollection();
@@ -54,6 +59,25 @@ namespace RCore.Editor
 			InitDirectives(m_target.profile);
 
 			CheckFirebaseConfigPaths();
+		}
+
+		private void OnDisable()
+		{
+			EditorApplication.update -= UpdateEditor;
+		}
+		
+		private void UpdateEditor()
+		{
+			float currentTime = Time.realtimeSinceStartup;
+
+			// Check if at least 1 second has passed since the last update
+			if (currentTime - m_lastUpdateTime >= 1f)
+			{
+				m_lastUpdateTime = currentTime;
+
+				// Your logic to update the editor
+				m_buildName = EditorHelper.GetBuildName();
+			}
 		}
 
 		public override void OnInspectorGUI()
@@ -78,6 +102,12 @@ namespace RCore.Editor
 				SwitchMode(false);
 			}
 			GUILayout.Space(10);
+			EditorHelper.BoxHorizontal(() =>
+			{
+				EditorHelper.TextArea(m_buildName, "Build Name", readOnly:true);
+				if (EditorHelper.Button("Copy", 50))
+					GUIUtility.systemCopyBuffer = m_buildName;
+			});
 			EditorHelper.BoxVertical(() =>
 			{
 				if (EditorHelper.ButtonColor("Save", Color.green))

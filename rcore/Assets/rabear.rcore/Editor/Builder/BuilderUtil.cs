@@ -65,7 +65,7 @@ namespace RCore.Editor
                 if (callback != null && !callback(opts, i / (float)buildSteps.Count, false))
                     return false;
 
-                BackUpTagetSettings(opts.target);
+                BackUpTargetSettings(opts.target);
                 var report = BuildPipeline.BuildPlayer(opts);
                 if (report.summary.result == BuildResult.Succeeded)
                     Debug.Log($"Build succeeded: {report.summary.platform} {report.summary.totalTime} {report.summary.totalSize} bytes");
@@ -88,7 +88,7 @@ namespace RCore.Editor
         private static BuildProfile mBackupProfile = new BuildProfile();
         private static BuildProfile mBackupTargetProfile = new BuildProfile();
 
-        private static void BackUpTagetSettings(BuildTarget pTarget)
+        private static void BackUpTargetSettings(BuildTarget pTarget)
         {
             var targetGroup = GroupForTarget(pTarget);
             mBackupTargetProfile.bundleIdentifier = PlayerSettings.GetApplicationIdentifier(targetGroup);

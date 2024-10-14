@@ -32,7 +32,7 @@ namespace RCore.Editor
     [Serializable]
     public class BuildProfile
     {
-        public static string NAME_BUILD_PATERN = "#ProductName#Version#BundleCode#Time";
+        public static string NAME_BUILD_PATTERN = "#ProductName#Version#BundleCode#Time";
         /// <summary>
         /// Name of build
         /// </summary>
@@ -163,19 +163,16 @@ namespace RCore.Editor
                 bundleCode = $"b{buildNumber}_";
 #endif
                 var time = DateTime.Now;
-                string file = NAME_BUILD_PATERN.Replace("#ProductName", name)
+                string file = NAME_BUILD_PATTERN.Replace("#ProductName", name)
                     .Replace("#Version", version)
                     .Replace("#BundleCode", bundleCode)
-                    .Replace("#Time", $"{time.Year}{time.Month.ToString("00")}{time.Day.ToString("00")}_{time.Hour.ToString("00")}h{time.Minute.ToString("00")}");
+                    .Replace("#Time", $"{time.Year % 100}{time.Month:00}{time.Day:00}_{time.Hour:00}h{time.Minute:00}");
                 file = file.Replace(" ", "_").Replace("/", "-").Replace(":", "-");
                 file += developmentBuild ? "_dev" : "";
                 file += suffix;
                 return file;
             }
-            else
-            {
-                return buildName + suffix;
-            }
+            return buildName + suffix;
         }
 
         public bool ContainScene(string pPath)

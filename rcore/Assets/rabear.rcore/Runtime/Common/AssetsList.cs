@@ -2,6 +2,7 @@
  * Author RadBear - nbhung71711 @gmail.com - 2019
  **/
 
+using RCore.Common.Editor;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -66,58 +67,15 @@ namespace RCore.Common
             Debug.LogError($"Not found {typeof(T).Name} with name {pSpriteName}");
             return -1;
         }
-    }
 
-    [System.Serializable]
-    public class AssetsArray<T> where T : Object
-    {
-        public T[] source;
-        public T defaultAsset;
-
-        public AssetsArray() { }
-
-        public AssetsArray(T[] pSource, T pDefault)
+#if UNITY_EDITOR
+        /// <summary>
+        /// Used in OnInspectorGUI() of CustomEditor
+        /// </summary>
+        public void Draw(string pDisplayName, bool @readonly = false, List<string> labels = null)
         {
-            source = pSource;
-            defaultAsset = pDefault;
+            EditorHelper.DrawAssetsList(this, pDisplayName, @readonly, labels);
         }
-
-        public AssetsArray<T> Init(T[] pSource, T pDefault = null)
-        {
-            source = pSource;
-            defaultAsset = pDefault;
-            return this;
-        }
-
-        public T GetAsset(string pSpriteName)
-        {
-            foreach (var s in source)
-                if (s != null && pSpriteName != null && s.name.ToLower() == pSpriteName.ToLower())
-                    return s;
-
-            Debug.LogError($"Not found {typeof(T).Name} with name {pSpriteName}");
-            return defaultAsset;
-        }
-
-        public T GetAsset(int pIndex)
-        {
-            if (pIndex < 0 || pIndex >= source.Length)
-            {
-                Debug.LogError($"Index {pIndex} {typeof(T).Name} is invalid!");
-                return defaultAsset;
-            }
-            return source[pIndex];
-        }
-
-        public int GetAssetIndex(string pSpriteName)
-        {
-            for (int i = 0; i < source.Length; i++)
-            {
-                if (source[i].name == pSpriteName)
-                    return i;
-            }
-            Debug.LogError($"Not found {typeof(T).Name} with name {pSpriteName}");
-            return -1;
-        }
+#endif
     }
 }

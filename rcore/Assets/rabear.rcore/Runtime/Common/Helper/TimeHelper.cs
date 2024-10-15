@@ -513,7 +513,7 @@ namespace RCore.Common
                         var text = w.downloadHandler.text;
                         if (int.TryParse(text, out int timestamp))
                         {
-                            m_ServerTime = UnixTimeStampToDateTime(timestamp);
+                            m_ServerTime = UnixTimestampToDateTime(timestamp);
                             m_GetServerTimeAt = Time.unscaledTime;
                             success = true;
                         }
@@ -585,21 +585,21 @@ namespace RCore.Common
             return seconds;
         }
 
-        public static DateTime UnixTimeStampToDateTime(float unixTimeStamp)
+        public static DateTime UnixTimestampToDateTime(float unixTimestamp)
         {
-            var dtDateTime = Epoch.AddSeconds(unixTimeStamp);
+            var dtDateTime = Epoch.AddSeconds(unixTimestamp);
             return dtDateTime;
         }
 
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        public static DateTime UnixTimestampToDateTime(double unixTimestamp)
         {
-            var dtDateTime = Epoch.AddSeconds(unixTimeStamp);
+            var dtDateTime = Epoch.AddSeconds(unixTimestamp);
             return dtDateTime;
         }
 
-        public static DateTime UnixTimeStampToDateTime(int unixTimeStamp)
+        public static DateTime UnixTimestampToDateTime(int unixTimestamp)
         {
-            var dtDateTime = Epoch.AddSeconds(unixTimeStamp);
+            var dtDateTime = Epoch.AddSeconds(unixTimestamp);
             return dtDateTime;
         }
 
@@ -626,6 +626,14 @@ namespace RCore.Common
                 + $"\n SortableDateTimePattern: \t {culture.DateTimeFormat.SortableDateTimePattern} \t {DateTime.Now.ToString(culture.DateTimeFormat.SortableDateTimePattern)}"
                 + $"\n UniversalSortableDateTimePattern: \t {culture.DateTimeFormat.UniversalSortableDateTimePattern} \t {DateTime.Now.ToString(culture.DateTimeFormat.UniversalSortableDateTimePattern)}");
         }
+        
+        public static int GetUtcNowTimestamp()
+        {
+            var utcNow = GetServerTimeUtc() ?? DateTime.UtcNow;
+            int timestamp = DateTimeToUnixTimestampInt(utcNow);
+            return timestamp;
+        }
+
     }
 
     public static class TimeExtension

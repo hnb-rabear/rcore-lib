@@ -1,7 +1,8 @@
 ﻿/**
- * Author RadBear - nbhung71711 @gmail.com - 2017 - 2020
+ * Author RadBear - nbhung71711 @gmail.com - 2017
  **/
 
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +14,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 namespace RCore.Common
@@ -407,6 +409,18 @@ namespace RCore.Common
 				return 0;
 			}
 #endif
+		}
+		
+		public static async void GetIpInfo(Action<string> pCallBack)
+		{
+			const string uri = "https://ipinfo.io/json";
+			using var w = UnityWebRequest.Get(uri);
+			await w.SendWebRequest();
+			bool requestSuccess = w.result == UnityWebRequest.Result.Success;
+			if (!requestSuccess)
+				Debug.LogError(w.error);
+			else
+				pCallBack(w.downloadHandler.text);
 		}
 	}
 

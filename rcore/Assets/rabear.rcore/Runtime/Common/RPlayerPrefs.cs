@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RCore.Common
 {
-	public static class RPlayerPrefCore
+	public static class RPlayerPrefContainer
 	{
 		private static readonly List<RPlayerPref> m_RPlayerPrefs = new List<RPlayerPref>();
 		public static void DeleteAll()
@@ -40,7 +40,7 @@ namespace RCore.Common
 		{
 			key = pKey;
 			changed = false;
-			RPlayerPrefCore.Register(this);
+			RPlayerPrefContainer.Register(this);
 		}
 		public void Delete()
 		{

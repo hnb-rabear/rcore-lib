@@ -17,7 +17,7 @@ namespace RCore
 		public class Profile
 		{
 			public string name;
-			public List<Directive> defines;
+			public List<Directive> defines = new List<Directive>();
 			public void AddDirective(string pName, bool defaultActive)
 			{
 				if (string.IsNullOrEmpty(pName))

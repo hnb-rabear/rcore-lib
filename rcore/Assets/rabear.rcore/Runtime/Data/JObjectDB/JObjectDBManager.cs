@@ -16,7 +16,7 @@ namespace RCore.Data.JObject
 		protected List<IJObjectController> m_controllers = new List<IJObjectController>();
 	
 		public UserSessionData userSessionData;
-		public UserSessionController userSessionController;
+		public UserSessionHandler userSessionHandler;
 		
 		protected bool m_initialized;
 		private float m_saveCountdown;
@@ -76,7 +76,7 @@ namespace RCore.Data.JObject
 				return;
 
 			userSessionData = CreateCollection<UserSessionData>("UserSessionData");
-			userSessionController = CreateController<UserSessionController, JObjectDBManager>();
+			userSessionHandler = CreateController<UserSessionHandler, JObjectDBManager>();
 			Load();
 			PostLoad();
 			m_initialized = true;
@@ -93,8 +93,10 @@ namespace RCore.Data.JObject
 				if (Time.unscaledTime - m_lastSave < 0.2f)
 					return;
 				int utcNowTimestamp = TimeHelper.GetUtcNowTimestamp();
+				foreach (var collection in m_controllers)
+					collection.OnPreSave(utcNowTimestamp);
 				foreach (var collection in m_collections)
-					collection.Save(utcNowTimestamp);
+					collection.Save();
 				m_saveDelayCustom = 0; // Reset save delay custom
 				m_lastSave = Time.unscaledTime;
 				return;
@@ -117,7 +119,7 @@ namespace RCore.Data.JObject
 			if (!m_enabledSave)
 				return;
 
-			m_collections.ImportData(data);
+			m_collections.Import(data);
 			foreach (var collection in m_collections)
 				collection.Load();
 			PostLoad();
@@ -156,7 +158,7 @@ namespace RCore.Data.JObject
 			return newCollection;
 		}
 		
-		protected T CreateController<T, M>() where T : JObjectController<M> where M : JObjectDBManager
+		protected T CreateController<T, M>() where T : JObjectHandler<M> where M : JObjectDBManager
 		{
 			var newController = Activator.CreateInstance<T>();
 			newController.manager = this as M;

@@ -201,7 +201,7 @@ namespace RCore.Data.KeyValue
 	}
 #if UNITY_EDITOR
 	[CustomEditor(typeof(DataManager), true)]
-	public class DataManagerEditor : Editor
+	public class DataManagerEditor : UnityEditor.Editor
 	{
 		public override void OnInspectorGUI()
 		{

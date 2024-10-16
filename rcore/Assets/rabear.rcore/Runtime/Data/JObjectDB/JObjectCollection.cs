@@ -10,7 +10,7 @@ namespace RCore.Data.JObject
 	[Serializable]
 	public abstract class JObjectCollection
 	{
-		[JsonIgnore] public string key;
+		[JsonIgnore] public string key { get; set; }
 
 		public JObjectCollection() { }
 		public JObjectCollection(string pKey)
@@ -21,7 +21,7 @@ namespace RCore.Data.JObject
 		/// Save data 
 		/// </summary>
 		/// <param name="minimizeSize">True: Minimize json data by Json.Net. False: serialize by JsonUtility; it is recommended due to its better performance.</param>
-		public virtual void Save(int utcNowTimestamp, bool minimizeSize = false)
+		public virtual void Save(bool minimizeSize = false)
 		{
 			PlayerPrefs.SetString(key, ToJson(minimizeSize));
 		}

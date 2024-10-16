@@ -3,6 +3,7 @@
 **/
 
 #if UNITY_EDITOR
+using RCore.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,9 +16,10 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace RCore.Common.Editor
+namespace RCore.Editor
 {
     public interface IDraw
     {
@@ -3077,7 +3079,7 @@ namespace RCore.Common.Editor
 
         private static bool IsDirectory(string path) => File.GetAttributes(path).HasFlag(FileAttributes.Directory);
 
-        public static Dictionary<GameObject, List<T>> FindComponents<T>(ConditionalDelegate<T> pValidCondition) where T : UnityEngine.Component
+        public static Dictionary<GameObject, List<T>> FindComponents<T>(ConditionalDelegate<T> pValidCondition) where T : Component
         {
             var allComponents = new Dictionary<GameObject, List<T>>();
             var objs = Selection.gameObjects;

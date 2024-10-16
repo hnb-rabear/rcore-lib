@@ -22,7 +22,7 @@ namespace RCore.Data.JObject.Editor
 			GUILayout.BeginVertical("box");
 				
 			if (GUILayout.Button("Save"))
-				JObjectDB.Save(DateTime.UtcNow.ToUnixTimestampInt());
+				JObjectDB.Save();
 				
 			if (GUILayout.Button("Back Up"))
 			{
@@ -32,22 +32,22 @@ namespace RCore.Data.JObject.Editor
 					+ ".json", "json,txt", "Please enter a file name to save!");
 
 				if (!string.IsNullOrEmpty(path))
-					JObjectDB.BackupData(path);
+					JObjectDB.Backup(path);
 			}
 				
 			if (GUILayout.Button("Log"))
-				JObjectDB.LogData();
+				JObjectDB.Log();
 				
 			if (!Application.isPlaying)
 			{
 				if (GUILayout.Button("Delete All"))
-					JObjectDB.DeleteAllData();
+					JObjectDB.DeleteAll();
 				
 				if (GUILayout.Button("Restore"))
 				{
 					string filePath = EditorUtility.OpenFilePanel("Select Data File", Application.dataPath, "json,txt");
 					if (!string.IsNullOrEmpty(filePath))
-						JObjectDB.RestoreData(filePath);
+						JObjectDB.Restore(filePath);
 				}
 			}
 				

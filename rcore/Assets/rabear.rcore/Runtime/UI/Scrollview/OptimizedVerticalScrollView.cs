@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using RCore.Common;
 using RCore.Inspector;
 #if UNITY_EDITOR
-using RCore.Common.Editor;
+using RCore.Editor;
 using UnityEditor;
 #endif
 

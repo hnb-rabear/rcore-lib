@@ -1,30 +1,14 @@
+using Newtonsoft.Json;
 using RCore.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace RCore.Data.JObject
 {
-	[Serializable]
-	public class KeyValueSS : IComparable<KeyValueSS>
-	{
-		[SerializeField] private string k;
-		[SerializeField] private string v;
-		public string Key { get => k; set => k = value; }
-		public string Value { get => v; set => v = value; }
-		public KeyValueSS(string pKey, string pValue)
-		{
-			k = pKey;
-			v = pValue;
-		}
-		public int CompareTo(KeyValueSS other)
-		{
-			return String.Compare(k, other.k, StringComparison.Ordinal);
-		}
-	}
-	
 	public static class JObjectDB
 	{
 		/// <summary>
@@ -59,20 +43,17 @@ namespace RCore.Data.JObject
 			return collection;
 		}
 		
-		private static void SaveCollectionKey(string key)
+		private static void SaveCollectionKey(string pKey)
 		{
 			string keysStr = PlayerPrefs.GetString(COLLECTIONS);
-			string[] keys = keysStr.Split(':');
-			for (int i = 0; i < keys.Length; i++)
-				if (keys[i] == key)
+			string[] keys = Array.Empty<string>();
+			if (!string.IsNullOrEmpty(keysStr))
+				keys = JsonHelper.ToArray<string>(keysStr);
+			foreach (string key in keys)
+				if (key == pKey)
 					return;
-
-			if (keys.Length == 0)
-				keysStr += key;
-			else
-				keysStr += ":" + key;
-
-			PlayerPrefs.SetString(COLLECTIONS, keysStr);
+			keys.Add(pKey, out keys);
+			PlayerPrefs.SetString(COLLECTIONS, JsonHelper.ToJson(keys));
 		}
 		
 		public static string[] GetCollectionKeys()
@@ -83,7 +64,7 @@ namespace RCore.Data.JObject
 				if (string.IsNullOrEmpty(keysStr))
 					return Array.Empty<string>();
 
-				string[] keys = keysStr.Split(':');
+				string[] keys = JsonHelper.ToArray<string>(keysStr);
 				return keys;
 			}
 			else
@@ -102,33 +83,26 @@ namespace RCore.Data.JObject
 		/// <summary>
 		/// Get data from all collections
 		/// </summary>
-		public static List<KeyValueSS> GetAllData()
+		public static Dictionary<string, string> GetAllData()
 		{
+			var dict = new Dictionary<string, string>();
 			if (collections.Count == 0)
 			{
 				var keys = GetCollectionKeys();
-				var list = new List<KeyValueSS>();
 				foreach (string key in keys)
 				{
 					var data = PlayerPrefs.GetString(key);
 					if (!string.IsNullOrEmpty(data))
-						list.Add(new KeyValueSS(key, data));
+						dict.Add(key, data);
 				}
-				return list;
+				return dict;
 			}
-			else
-			{
-				var list = new List<KeyValueSS>();
-				foreach (var pair in collections)
-				{
-					var data = pair.Value.ToJson();
-					list.Add(new KeyValueSS(pair.Key, data));
-				}
-				return list;
-			}
+			foreach (var pair in collections)
+				dict.Add(pair.Key, pair.Value.ToJson());
+			return dict;
 		}
 
-		public static void DeleteAllData()
+		public static void DeleteAll()
 		{
 			if (Application.isPlaying)
 			{
@@ -141,12 +115,13 @@ namespace RCore.Data.JObject
 				PlayerPrefs.DeleteKey(saverKeys[i]);
 		}
 
-		public static void ImportData(string jsonData)
+		public static void Import(string jsonData)
 		{
-			var collectionsJson = JsonHelper.ToList<KeyValueSS>(jsonData);
+			var collectionsJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonData);
 			foreach (var keyValue in collectionsJson)
 			{
 				PlayerPrefs.SetString(keyValue.Key, keyValue.Value);
+				SaveCollectionKey(keyValue.Key);
 				var collection = GetCollection(keyValue.Key);
 				collection?.Load(keyValue.Value);
 #if UNITY_EDITOR
@@ -156,12 +131,14 @@ namespace RCore.Data.JObject
 			PlayerPrefs.Save();
 		}
 
-		public static void LogData()
+		public static void Log()
 		{
-			Debug.Log(JsonHelper.ToJson(GetAllData()));
+			var json = JsonConvert.SerializeObject(GetAllData());
+			Debug.Log(json);
+			UniClipboard.SetText(json);
 		}
 
-		public static void BackupData(string customFileName = null)
+		public static void Backup(string customFileName = null, bool openDirectory = false)
 		{
 			var time = DateTime.Now;
 			string identifier = Application.identifier;
@@ -175,20 +152,22 @@ namespace RCore.Data.JObject
 			}
 			else
 				path = GetFilePath(customFileName);
-			string jsonData = JsonHelper.ToJson(GetAllData());
+			string jsonData = JsonConvert.SerializeObject(GetAllData());
 			File.WriteAllText(path, jsonData);
 #if UNITY_EDITOR
 			Debug.Log($"Backup data at path {path}");
+			if (openDirectory)
+				Process.Start(new ProcessStartInfo(Path.GetDirectoryName(path)));
 #endif
 		}
 
-		public static void RestoreData(string filePath)
+		public static void Restore(string filePath)
 		{
 			using (var sw = new StreamReader(filePath))
 			{
 				var content = sw.ReadToEnd();
 				if (!string.IsNullOrEmpty(content))
-					ImportData(content);
+					Import(content);
 			}
 		}
 
@@ -201,16 +180,19 @@ namespace RCore.Data.JObject
 				pair.Value.Load();
 		}
 
-		public static void Save(int utcNowTimestamp)
+		public static void Save()
 		{
 			foreach (var pair in collections)
-				pair.Value.Save(utcNowTimestamp);
+				pair.Value.Save();
 		}
 		
 		private static string GetFilePath(string fileName)
 		{
 #if UNITY_EDITOR
-			return Path.Combine(Application.dataPath.Replace("Assets", "Saves"), fileName + ".json");
+			string directoryPath = Application.dataPath.Replace("Assets", "Saves");
+			if (!Directory.Exists(directoryPath))
+				Directory.CreateDirectory(directoryPath);
+			return Path.Combine(directoryPath, fileName + ".json");
 #endif
 			return Path.Combine(Application.persistentDataPath, fileName + ".json");
 		}
@@ -218,24 +200,21 @@ namespace RCore.Data.JObject
 
 	public static class JObjectDBHelper
 	{
-		public static List<KeyValueSS> ToListKeyValue(this List<JObjectCollection> collections)
+		public static Dictionary<string, string> ToDictionary(this List<JObjectCollection> collections)
 		{
-			var list = new List<KeyValueSS>();
+			var list = new Dictionary<string, string>();
 			foreach (var pair in collections)
-			{
-				var data = pair.ToJson();
-				list.Add(new KeyValueSS(pair.key, data));
-			}
+				list.Add(pair.key, pair.ToJson());
 			return list;
 		}
 		public static string ToJson(this List<JObjectCollection> collections)
 		{
-			var list = collections.ToListKeyValue();
-			return JsonHelper.ToJson(list);
+			var list = collections.ToDictionary();
+			return JsonConvert.SerializeObject(list);
 		}
-		public static void ImportData(this List<JObjectCollection> collections, string jsonData)
+		public static void Import(this List<JObjectCollection> collections, string jsonData)
 		{
-			var keyValuePairs = JsonHelper.ToList<KeyValueSS>(jsonData);
+			var keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonData);
 			if (keyValuePairs != null)
 				foreach (var pair in keyValuePairs)
 					PlayerPrefs.SetString(pair.Key, pair.Value);

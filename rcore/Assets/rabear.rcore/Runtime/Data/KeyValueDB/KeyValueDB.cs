@@ -190,7 +190,7 @@ namespace RCore.Data.KeyValue
 		/// <summary>
 		/// Get keys and values from data saver from saver
 		/// </summary>
-		public static List<KeyValueSS> GetAllDataKeyValues(string pSaverKey)
+		public static List<KeyValueSS> GetCollectionKeys(string pSaverKey)
 		{
 			string data = GetData(pSaverKey);
 			return JsonHelper.ToList<KeyValueSS>(data);
@@ -208,7 +208,7 @@ namespace RCore.Data.KeyValue
 				if (string.IsNullOrEmpty(saverKey))
 					continue;
 
-				var keyValues = GetAllDataKeyValues(saverKey);
+				var keyValues = GetCollectionKeys(saverKey);
 				dictKeyValues.Add(saverKey, keyValues);
 			}
 			return dictKeyValues;

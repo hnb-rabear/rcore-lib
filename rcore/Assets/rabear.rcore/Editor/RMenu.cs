@@ -3,7 +3,9 @@
  **/
 
 using RCore.Common;
-using RCore.Common.Editor;
+using RCore.Editor;
+using System.Diagnostics;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +19,7 @@ namespace RCore.Editor
 		private const string SHIFT = "#";
 		private const string CTRL = "%";
 
-		[MenuItem("RCore/Save Assets " + SHIFT + "_1", priority = INDEX + 1)]
+		[MenuItem("RCore/Asset Database/Save Assets " + SHIFT + "_1", priority = INDEX + 1)]
 		private static void SaveAssets()
 		{
 			var objs = Selection.objects;
@@ -28,19 +30,19 @@ namespace RCore.Editor
 			AssetDatabase.SaveAssets();
 		}
 
-		[MenuItem("RCore/Refresh Prefabs in folder", priority = INDEX +  2)]
+		[MenuItem("RCore/Asset Database/Refresh Prefabs in folder", priority = INDEX +  2)]
 		private static void RefreshPrefabs()
 		{
 			RefreshAssets("t:GameObject");
 		}
 
-		[MenuItem("RCore/Refresh ScriptableObjects in folder", priority = INDEX +  3)]
+		[MenuItem("RCore/Asset Database/Refresh ScriptableObjects in folder", priority = INDEX +  3)]
 		private static void RefreshScriptableObjects()
 		{
 			RefreshAssets("t:ScriptableObject");
 		}
 
-		[MenuItem("RCore/Refresh Assets in folder", priority = INDEX +  4)]
+		[MenuItem("RCore/Asset Database/Refresh Assets in folder", priority = INDEX +  4)]
 		private static void RefreshAll()
 		{
 			RefreshAssets("t:GameObject t:ScriptableObject");
@@ -63,7 +65,7 @@ namespace RCore.Editor
 
 		//==========================================================
 
-		[MenuItem("RCore/Group Scene Objects " + ALT + "_F1", priority = INDEX + 31)]
+		[MenuItem("RCore/Group Scene Objects " + ALT + "_F1", priority = INDEX + 21)]
 		private static void GroupSceneObjects()
 		{
 			var objs = Selection.gameObjects;
@@ -78,7 +80,7 @@ namespace RCore.Editor
 			}
 		}
 
-		[MenuItem("RCore/Ungroup Scene Objects " + ALT + "_F2", priority = INDEX + 32)]
+		[MenuItem("RCore/Ungroup Scene Objects " + ALT + "_F2", priority = INDEX + 22)]
 		private static void UngroupSceneObjects()
 		{
 			var objs = Selection.gameObjects;
@@ -91,13 +93,13 @@ namespace RCore.Editor
 
 		//==========================================================
 
-		[MenuItem("RCore/Run _F5", priority = INDEX + 61)]
+		[MenuItem("RCore/Run _F5", priority = INDEX + 41)]
 		private static void Run()
 		{
 			EditorApplication.isPlaying = true;
 		}
 
-		[MenuItem("RCore/Stop #_F5", priority = INDEX + 62)]
+		[MenuItem("RCore/Stop #_F5", priority = INDEX + 42)]
 		private static void Stop()
 		{
 			EditorApplication.isPlaying = false;
@@ -105,11 +107,54 @@ namespace RCore.Editor
 
 		//==========================================================
 
-		[MenuItem("RCore/Clear PlayerPrefs", priority = INDEX + 91)]
+		[MenuItem("RCore/Clear PlayerPrefs", priority = INDEX + 61)]
 		private static void ClearPlayerPrefs()
 		{
 			if (EditorHelper.ConfirmPopup("Clear PlayerPrefs"))
 				PlayerPrefs.DeleteAll();
+		}
+		
+		//==========================================================
+		
+		[MenuItem("RCore/Explorer/Open DataPath Folder", false, INDEX + 81)]
+		private static void OpenDataPathFolder()
+		{
+			string path = Application.dataPath;
+			var psi = new ProcessStartInfo(path);
+			Process.Start(psi);
+		}
+		
+		[MenuItem("RCore/Explorer/Open StreamingAssets Folder", false, INDEX + 82)]
+		private static void OpenStreamingAssetsFolder()
+		{
+			string path = Application.streamingAssetsPath;
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+				AssetDatabase.Refresh();
+			}
+			var psi = new ProcessStartInfo(path);
+			Process.Start(psi);
+		}
+		
+		[MenuItem("RCore/Explorer/Open PersistentData Folder", false, INDEX + 83)]
+		private static void OpenPersistentDataFolder()
+		{
+			string path = Application.persistentDataPath;
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
+			var psi = new ProcessStartInfo(path);
+			Process.Start(psi);
+		}
+		
+		[MenuItem("RCore/Explorer/Open UnityEditor Folder", false, INDEX + 84)]
+		private static void OpenUnityEditorFolder()
+		{
+			string path = EditorApplication.applicationPath.Substring(0, EditorApplication.applicationPath.LastIndexOf("/"));
+			var psi = new ProcessStartInfo(path);
+			Process.Start(psi);
 		}
 	}
 }

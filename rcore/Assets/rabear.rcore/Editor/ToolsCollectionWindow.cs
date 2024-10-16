@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using RCore.Common;
-using RCore.Common.Editor;
+using RCore.Editor;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
@@ -1046,8 +1046,7 @@ namespace RCore.Editor
 					{
 						if (string.IsNullOrEmpty(m_AnimationClipsPackScript.Value))
 							return;
-
-						string templateFilePath = "Assets/RCore/Utilities/Editor/AnimationsPackTemplate.txt";
+						
 						string fieldsName = "";
 						string enum_ = "\tpublic enum Clip \n\t{\n";
 						string indexes = "";
@@ -1065,13 +1064,13 @@ namespace RCore.Editor
 							names += $"\tpublic const string {fieldName}_NAME = \"{clip.name}\";\n";
 							arrayElements += $"\t\t\t\t{fieldName},\n";
 							paths += $"\tprivate const string {fieldName}_PATH = \"{m_AnimationPaths[i]}\";\n";
-							validateFields += $"\t\t\tif ({fieldName} == null) {fieldName} = RCore.Common.Editor.EditorHelper.GetAnimationFromModel({fieldName}_PATH, {fieldName}_NAME);\n";
+							validateFields += $"\t\t\tif ({fieldName} == null) {fieldName} = RCore.Editor.EditorHelper.GetAnimationFromModel({fieldName}_PATH, {fieldName}_NAME);\n";
 							validateFields += $"\t\t\tif ({fieldName} == null) Debug.LogError(nameof({fieldName}) + \" is Null\");\n";
 							i++;
 						}
 
 						enum_ += "\t}\n";
-						var generatedContent = AssetDatabase.LoadAssetAtPath<TextAsset>(templateFilePath).text;
+						var generatedContent = Resources.Load<TextAsset>("AnimationsPackTemplate.txt").text;
 						generatedContent = generatedContent
 							.Replace("<class_name>", m_AnimationClipsPackScript.Value)
 							.Replace("<enum_>", enum_)

@@ -3,7 +3,7 @@
  **/
 
 using RCore.Common;
-using RCore.Common.Editor;
+using RCore.Editor;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -83,7 +83,7 @@ namespace RCore.Data.KeyValue.Editor
                 });
                 actions.Add(new EditorButton()
                 {
-                    label = "Save Manually (In Game)",
+                    label = "Save (In Game)",
                     color = Application.isPlaying ? Color.yellow : Color.grey,
                     onPressed = () =>
                     {

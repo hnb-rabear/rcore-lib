@@ -4,7 +4,7 @@
 
 using UnityEditor;
 using UnityEngine;
-using RCore.Common.Editor;
+using RCore.Editor;
 
 namespace RCore.Data.KeyValue.Editor
 {

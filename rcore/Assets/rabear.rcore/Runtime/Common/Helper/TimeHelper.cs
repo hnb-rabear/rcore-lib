@@ -634,6 +634,22 @@ namespace RCore.Common
             return timestamp;
         }
 
+        public static int GetCurrentWeekNumber(DateTime date)
+        {
+            // Get the ISO 8601 week number for the specified date
+            var cultureInfo = CultureInfo.InvariantCulture;
+            var calendar = cultureInfo.Calendar;
+        
+            // Specify that the first day of the week is Monday and
+            // use the rule that the first week has at least 4 days
+            var weekRule = CalendarWeekRule.FirstFourDayWeek;
+            var firstDayOfWeek = DayOfWeek.Monday;
+        
+            // Get the week number
+            int weekNumber = calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek);
+        
+            return weekNumber;
+        }
     }
 
     public static class TimeExtension

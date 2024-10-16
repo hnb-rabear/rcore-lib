@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using RCore.Common;
 using Debug = RCore.Common.Debug;
 #if UNITY_EDITOR
-using RCore.Common.Editor;
+using RCore.Editor;
 using UnityEditor;
 #endif
 

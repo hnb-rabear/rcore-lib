@@ -75,7 +75,7 @@ namespace RCore.Data.JObject
 			if (m_initialized)
 				return;
 
-			userSessionData = CreateCollection<UserSessionData>("UserSessionData");
+			userSessionData = CreateCollection<UserSessionData>();
 			userSessionHandler = CreateController<UserSessionHandler, JObjectDBManager>();
 			Load();
 			PostLoad();
@@ -150,8 +150,10 @@ namespace RCore.Data.JObject
 		/// </summary>
 		protected abstract void Load();
 		
-		protected T CreateCollection<T>(string key) where T : JObjectCollection, new()
+		protected T CreateCollection<T>(string key = null) where T : JObjectCollection, new()
 		{
+			if (string.IsNullOrEmpty(key))
+				key = typeof(T).Name;
 			var newCollection = JObjectDB.CreateCollection<T>(key);
 			if (newCollection != null)
 				m_collections.Add(newCollection);

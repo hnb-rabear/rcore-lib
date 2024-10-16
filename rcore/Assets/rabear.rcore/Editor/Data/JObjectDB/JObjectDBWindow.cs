@@ -22,7 +22,7 @@ namespace RCore.Data.JObject.Editor
 			var actions = new List<IDraw>();
 			actions.Add(new EditorButton
 			{
-				label = "Clear",
+				label = "Delete All",
 				onPressed = () =>
 				{
 					if (EditorHelper.ConfirmPopup())

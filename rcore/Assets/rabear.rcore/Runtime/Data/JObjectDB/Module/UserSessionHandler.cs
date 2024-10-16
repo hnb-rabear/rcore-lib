@@ -9,28 +9,20 @@ namespace RCore.Data.JObject
 			var sessionData = manager.userSessionData;
 			if (sessionData.firstActive == 0)
 				sessionData.firstActive = utcNowTimestamp;
-			if (sessionData.lastActive == 0)
+			var lastActive = TimeHelper.UnixTimestampToDateTime(sessionData.lastActive);
+			var utcNow = TimeHelper.UnixTimestampToDateTime(utcNowTimestamp);
+			if ((utcNow - lastActive).TotalDays > 1)
+				sessionData.daysStreak = 0; //Reset days streak
+			if (lastActive.Date != utcNow.Date)
 			{
-				sessionData.lastActive = utcNowTimestamp;
 				sessionData.days++;
+				sessionData.daysStreak++;
+				sessionData.sessionsDaily = 0; // Reset daily sessions count
 			}
-			else
-			{
-				var lastActive = TimeHelper.UnixTimestampToDateTime(sessionData.lastActive);
-				var utcNow = TimeHelper.UnixTimestampToDateTime(utcNowTimestamp);
-				if ((utcNow - lastActive).TotalDays > 1)
-					sessionData.daysStreak = 0; //Reset days streak
-				if (lastActive.Day != utcNow.Day)
-				{
-					sessionData.days++;
-					sessionData.daysStreak++;
-					sessionData.sessionsDaily = 0; // Reset daily sessions count
-				}
-				if (TimeHelper.GetCurrentWeekNumber(lastActive) != TimeHelper.GetCurrentWeekNumber(utcNow))
-					sessionData.sessionsWeekly = 0; // Reset weekly sessions count
-				if (lastActive.Month != utcNow.Month)
+			if (lastActive.Year != utcNow.Year || TimeHelper.GetCurrentWeekNumber(lastActive) != TimeHelper.GetCurrentWeekNumber(utcNow))
+				sessionData.sessionsWeekly = 0; // Reset weekly sessions count
+			if (lastActive.Year != utcNow.Year || lastActive.Month != utcNow.Month)
 					sessionData.sessionsMonthly = 0; // Reset monthly sessions count
-			}
 			sessionData.sessionsTotal++;
 			sessionData.sessionsDaily++;
 			sessionData.sessionsWeekly++;

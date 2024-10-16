@@ -113,6 +113,7 @@ namespace RCore.Data.JObject
 			var saverKeys = GetCollectionKeys();
 			for (int i = 0; i < saverKeys.Length; i++)
 				PlayerPrefs.DeleteKey(saverKeys[i]);
+			collections.Clear();
 		}
 
 		public static void Import(string jsonData)

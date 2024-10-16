@@ -460,13 +460,5 @@ namespace RCore.Editor
 			if (!File.Exists(liveFilePath))
 				FirebaseLiveConfigPath = FirebaseLiveConfigPath.Contains("Assets") ? EditorHelper.FormatPathToUnityPath(FirebaseLiveConfigPath).Replace("Assets/", "") : "";
 		}
-
-		//======== CHEATS
-
-		[MenuItem("RCore/Tools/Open Dev Settings %_&_j")]
-		private static void OpenDevSettings()
-		{
-			Selection.activeObject = EnvSetting.Instance;
-		}
 	}
 }

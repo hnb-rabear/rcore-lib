@@ -19,6 +19,12 @@ namespace RCore.Editor
 		private const string SHIFT = "#";
 		private const string CTRL = "%";
 
+		[MenuItem("RCore/Open Env Settings %_&_j", priority = INDEX)]
+		private static void OpenEnvSettings()
+		{
+			Selection.activeObject = EnvSetting.Instance;
+		}
+		
 		[MenuItem("RCore/Asset Database/Save Assets " + SHIFT + "_1", priority = INDEX + 1)]
 		private static void SaveAssets()
 		{
@@ -89,20 +95,6 @@ namespace RCore.Editor
 				for (int i = 0; i < objs.Length; i++)
 					objs[i].transform.SetParent(null);
 			}
-		}
-
-		//==========================================================
-
-		[MenuItem("RCore/Run _F5", priority = INDEX + 41)]
-		private static void Run()
-		{
-			EditorApplication.isPlaying = true;
-		}
-
-		[MenuItem("RCore/Stop #_F5", priority = INDEX + 42)]
-		private static void Stop()
-		{
-			EditorApplication.isPlaying = false;
 		}
 
 		//==========================================================

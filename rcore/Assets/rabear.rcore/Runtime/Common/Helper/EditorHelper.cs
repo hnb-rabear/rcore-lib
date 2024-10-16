@@ -1290,7 +1290,7 @@ namespace RCore.Editor
             if (string.IsNullOrEmpty(pYes))
                 pYes = "Yes";
             if (string.IsNullOrEmpty(pNo))
-                pNo = "pNo";
+                pNo = "No";
             return EditorUtility.DisplayDialog("Confirm your action", pMessage, pYes, pNo);
         }
 

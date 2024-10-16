@@ -67,12 +67,12 @@ namespace RCore
 			{
 				if (m_Instance == null)
 				{
-					m_Instance = Resources.Load<EnvSetting>("DevSetting");
+					m_Instance = Resources.Load<EnvSetting>(nameof(EnvSetting));
 #if UNITY_EDITOR
 					if (m_Instance == null)
 					{
-						EditorHelper.CreateScriptableAsset<EnvSetting>("Assets/Resources/DevSetting.asset");
-						m_Instance = Resources.Load<EnvSetting>("DevSetting");
+						EditorHelper.CreateScriptableAsset<EnvSetting>("Assets/Resources/EnvSetting.asset");
+						m_Instance = Resources.Load<EnvSetting>(nameof(EnvSetting));
 					}
 #endif
 					m_Instance.Init();

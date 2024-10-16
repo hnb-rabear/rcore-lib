@@ -22,7 +22,6 @@ namespace RCore.Data.KeyValue
         protected ListData<int> m_noticedIds;
 
         public int Count => m_items.Count;
-
         public T this[int index]
         {
             get => m_items[index];

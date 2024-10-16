@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "9057452c86079e4265228480b1439442894d5078"
     },
+    "com.cysharp.zstring": {
+      "version": "https://github.com/Cysharp/ZString.git?path=src/ZString.Unity/Assets/Scripts/ZString",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f4b39aad95edd3350f8f06567c9d07168ac941ec"
+    },
     "com.unity.addressables": {
       "version": "1.22.2",
       "depth": 0,

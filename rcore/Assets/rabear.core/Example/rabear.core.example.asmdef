@@ -1,0 +1,16 @@
+{
+    "name": "rabear.core.example",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6da4084ae97045c4f83b755aea1383d0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

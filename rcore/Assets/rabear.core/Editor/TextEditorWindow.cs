@@ -8,7 +8,8 @@ namespace RCore.Editor
 	{
 		private string m_content;
 		private Action<string> m_onContentSaved;
-		
+		private Vector2 m_scrollPosition;
+
 		public static void ShowWindow(string initialContent, Action<string> callback)
 		{
 			var window = CreateInstance<TextEditorWindow>();
@@ -22,8 +23,13 @@ namespace RCore.Editor
 		private void OnGUI()
 		{
 			EditorGUILayout.LabelField("Content:");
-			m_content = EditorGUILayout.TextArea(m_content, GUILayout.Height(100));
-			
+			m_scrollPosition = EditorGUILayout.BeginScrollView(m_scrollPosition, GUILayout.Height(200));
+			var textAreaStyle = new GUIStyle(EditorStyles.textArea)
+			{
+				wordWrap = true
+			};
+			m_content = EditorGUILayout.TextArea(m_content, textAreaStyle, GUILayout.Height(200));
+			EditorGUILayout.EndScrollView();
 			GUILayout.Space(10);
 
 			// Buttons for saving or canceling the operation

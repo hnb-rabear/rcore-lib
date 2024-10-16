@@ -49,6 +49,7 @@ namespace RCore.Data.JObject
 			string[] keys = Array.Empty<string>();
 			if (!string.IsNullOrEmpty(keysStr))
 				keys = JsonHelper.ToArray<string>(keysStr);
+			keys ??= Array.Empty<string>();
 			foreach (string key in keys)
 				if (key == pKey)
 					return;
@@ -65,6 +66,7 @@ namespace RCore.Data.JObject
 					return Array.Empty<string>();
 
 				string[] keys = JsonHelper.ToArray<string>(keysStr);
+				keys ??= Array.Empty<string>();
 				return keys;
 			}
 			else

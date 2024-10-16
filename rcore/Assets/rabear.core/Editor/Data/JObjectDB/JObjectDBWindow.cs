@@ -3,6 +3,7 @@ using RCore.Editor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace RCore.Data.JObject.Editor
 	public class JObjectDBWindow : EditorWindow
 	{
 		private Dictionary<string, string> m_data;
+		private Vector2 m_scrollPosition;
 
 		private void OnEnable()
 		{
@@ -19,10 +21,12 @@ namespace RCore.Data.JObject.Editor
 
 		private void OnGUI()
 		{
+			m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, false);
 			var actions = new List<IDraw>();
 			actions.Add(new EditorButton
 			{
 				label = "Delete All",
+				color = Color.red,
 				onPressed = () =>
 				{
 					if (EditorHelper.ConfirmPopup())
@@ -72,24 +76,32 @@ namespace RCore.Data.JObject.Editor
 				},
 			});
 			EditorHelper.GridDraws(2, actions);
-			
-			GUILayout.BeginVertical("box");
-			foreach (var pair in m_data)
+
+			EditorHelper.BoxVertical("JObjects", () =>
 			{
-				GUILayout.BeginHorizontal();
-				EditorHelper.LabelField(pair.Key, 150);
-				EditorHelper.TextField(pair.Value, null);
-				if (EditorHelper.Button("Edit", 60))
-					Edit(pair.Key, pair.Value);
-				GUILayout.EndHorizontal();
-			}
-			GUILayout.EndVertical();
+				if (m_data != null)
+					foreach (var pair in m_data)
+					{
+						GUILayout.BeginHorizontal();
+						EditorHelper.LabelField(pair.Key, 150);
+						EditorHelper.TextField(pair.Value, null);
+						if (EditorHelper.Button("Edit", 60))
+							Edit(pair.Key, pair.Value);
+						GUILayout.EndHorizontal();
+					}
+			}, default, true);
+			GUILayout.EndScrollView();
 		}
 
 		private void Edit(string key, string content)
 		{
+			var parsedJson = JsonConvert.DeserializeObject(content);
+			content = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
 			TextEditorWindow.ShowWindow(content, result =>
 			{
+				parsedJson = JsonConvert.DeserializeObject(result);
+				result = JsonConvert.SerializeObject(parsedJson);
+				
 				PlayerPrefs.SetString(key, result);
 				m_data = JObjectDB.GetAllData();
 			});

@@ -2,6 +2,7 @@ using RCore.Data.JObject;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RCore.Example.Data
 {
@@ -17,8 +18,8 @@ namespace RCore.Example.Data
 	{
 		public List<T> items = new List<T>();
 		public int lastItemId;
-		public List<int> deletedIds = new List<int>();
-		public List<int> noticedIds = new List<int>();
+		public List<int> freedIds = new List<int>();
+		public List<int> noticedItemIds = new List<int>();
 
 		public int Count => items.Count;
 		public T this[int index] { get => items[index]; set => items[index] = value; }
@@ -37,14 +38,14 @@ namespace RCore.Example.Data
 			else
 			{
 				int newId = lastItemId += 1;
-				if (deletedIds.Count > 0)
+				if (freedIds.Count > 0)
 				{
-					newId = deletedIds[deletedIds.Count - 1];
-					deletedIds.RemoveAt(deletedIds.Count - 1);
+					newId = freedIds[freedIds.Count - 1];
+					freedIds.RemoveAt(freedIds.Count - 1);
 				}
 
 				pInvItem.id = newId;
-				noticedIds.Add(newId);
+				noticedItemIds.Add(newId);
 			}
 
 			items.Add(pInvItem);
@@ -76,13 +77,13 @@ namespace RCore.Example.Data
 				else
 				{
 					int newId = lastItemId += 1;
-					if (deletedIds.Count > 0)
+					if (freedIds.Count > 0)
 					{
-						newId = deletedIds[deletedIds.Count - 1];
-						deletedIds.RemoveAt(deletedIds.Count - 1);
+						newId = freedIds[freedIds.Count - 1];
+						freedIds.RemoveAt(freedIds.Count - 1);
 					}
 					pInvItems[j].id = newId;
-					noticedIds.Add(newId);
+					noticedItemIds.Add(newId);
 				}
 			}
 
@@ -110,7 +111,7 @@ namespace RCore.Example.Data
 			for (int i = 0; i < items.Count; i++)
 				if (items[i].id == pInvItem.id)
 				{
-					deletedIds.Add(items[i].id);
+					freedIds.Add(items[i].id);
 					items.Remove(items[i]);
 					return true;
 				}
@@ -123,7 +124,7 @@ namespace RCore.Example.Data
 			for (int i = 0; i < items.Count; i++)
 				if (items[i].id == id)
 				{
-					deletedIds.Add(items[i].id);
+					freedIds.Add(items[i].id);
 					items.Remove(items[i]);
 					return true;
 				}
@@ -149,7 +150,7 @@ namespace RCore.Example.Data
 
 		public virtual void RemoveNoticedId(int pId)
 		{
-			noticedIds.Remove(pId);
+			noticedItemIds.Remove(pId);
 		}
 
 		public virtual List<T> GetNoticedItems()
@@ -157,7 +158,7 @@ namespace RCore.Example.Data
 			var list = new List<T>();
 			for (int i = 0; i < items.Count; i++)
 			{
-				if (noticedIds.Contains(items[i].id))
+				if (noticedItemIds.Contains(items[i].id))
 					list.Add(items[i]);
 			}
 			return list;

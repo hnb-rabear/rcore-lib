@@ -752,7 +752,6 @@ namespace RCore.Editor
             AssetDatabase.CreateAsset(asset, path);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
-            Selection.activeObject = asset;
             return asset;
         }
 

@@ -9,7 +9,7 @@ using UnityEditor;
 namespace RCore.Editor
 {
 	[Serializable]
-	public class SpritesCutter
+	public class CutSpriteSheetTool
 	{
 		[SerializeField] private List<Texture2D> m_spriteSheets = new List<Texture2D>();
 		[SerializeField] private bool m_renameSprites;

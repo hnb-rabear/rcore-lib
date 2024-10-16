@@ -54,7 +54,7 @@ namespace RCore.Editor.SRW
         {
             var collection = AssetDatabase.LoadAssetAtPath(FilePath, typeof(SpritesReplacerData)) as SpritesReplacerData;
             if (collection == null)
-                collection = EditorHelper.CreateScriptableAsset<SpritesReplacerData>(FilePath);
+	            collection = EditorHelper.CreateScriptableAsset<SpritesReplacerData>(FilePath);
             return collection;
         }
     }

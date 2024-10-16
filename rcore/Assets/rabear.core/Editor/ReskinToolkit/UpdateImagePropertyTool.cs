@@ -1,5 +1,4 @@
 ﻿using RCore.Common;
-using RCore.Editor;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -9,7 +8,8 @@ using Object = UnityEngine.Object;
 
 namespace RCore.Editor
 {
-	public class ImageComponentPropertiesFixer
+	[System.Serializable]
+	public class UpdateImagePropertyTool
 	{
 		private bool m_displayIcon;
 		private List<Sprite> m_sprites = new List<Sprite>();

@@ -2,9 +2,8 @@ using RCore.Data.JObject;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace RCore.Example.Data
+namespace RCore.Example.Data.JObject
 {
 	[Serializable]
 	public class InvItemData
@@ -14,7 +13,7 @@ namespace RCore.Example.Data
 	}
 
 	[Serializable]
-	public class InventoryData<T> : JObjectCollection where T : InvItemData
+	public class InventoryCollection<T> : JObjectCollection where T : InvItemData
 	{
 		public List<T> items = new List<T>();
 		public int lastItemId;

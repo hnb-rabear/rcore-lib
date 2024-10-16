@@ -39,10 +39,10 @@ namespace RCore.Data.JObject.Editor
 				JObjectDB.Restore(path);
 		}
 
-		[MenuItem("RCore/JObjectDB/Log", priority = INDEX + 5)]
+		[MenuItem("RCore/JObjectDB/Copy All", priority = INDEX + 5)]
 		private static void LogData()
 		{
-			JObjectDB.Log();
+			JObjectDB.CopyAllData();
 		}
 	}
 }

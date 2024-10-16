@@ -1,4 +1,5 @@
-﻿using RCore.Common;
+﻿using System;
+using RCore.Common;
 using RCore.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -11,11 +12,16 @@ namespace RCore.Editor
 		private SearchAndReplaceAssetToolkit m_searchAndReplaceAssetToolkit;
 		private string m_tab;
 
+		private void OnEnable()
+		{
+			m_searchAndReplaceAssetToolkit = SearchAndReplaceAssetToolkit.Load();
+		}
+
 		private void OnGUI()
 		{
 			m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, false);
 			m_searchAndReplaceAssetToolkit ??= SearchAndReplaceAssetToolkit.Load();
-			m_tab = EditorHelper.Tabs("m_assetsReplacer.spriteReplace", "Replace Sprite", "Cut Sprite Sheet", "Update Image Property", "Replace Object");
+			m_tab = EditorHelper.Tabs(nameof(SearchAndReplaceAssetToolkitWindow), "Replace Sprite", "Cut Sprite Sheet", "Update Image Property", "Replace Object");
 			GUILayout.BeginVertical("box");
 			switch (m_tab)
 			{

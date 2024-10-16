@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 namespace RCore.Data.JObject
 {
 	[Serializable]
-	public class UserSessionData : JObjectCollection
+	public class UserSessionCollection : JObjectCollection
 	{
 		public int[] sessions = { 0, 0, 0, 0 }; // 0: sessionsTotal, 1: sessionsDaily, 2: sessionWeekly, 3: sessionMonthly
 		public int days;

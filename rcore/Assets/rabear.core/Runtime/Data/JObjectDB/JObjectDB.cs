@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -45,41 +46,40 @@ namespace RCore.Data.JObject
 		
 		private static void SaveCollectionKey(string pKey)
 		{
-			string keysStr = PlayerPrefs.GetString(COLLECTIONS);
-			string[] keys = Array.Empty<string>();
-			if (!string.IsNullOrEmpty(keysStr))
-				keys = JsonHelper.ToArray<string>(keysStr);
-			keys ??= Array.Empty<string>();
+			var keys = GetSavedCollectionKeys();
 			foreach (string key in keys)
 				if (key == pKey)
 					return;
-			keys.Add(pKey, out keys);
+			keys.Add(pKey);
 			PlayerPrefs.SetString(COLLECTIONS, JsonHelper.ToJson(keys));
 		}
-		
-		public static string[] GetCollectionKeys()
-		{
-			if (collections.Count == 0)
-			{
-				string keysStr = PlayerPrefs.GetString(COLLECTIONS);
-				if (string.IsNullOrEmpty(keysStr))
-					return Array.Empty<string>();
 
-				string[] keys = JsonHelper.ToArray<string>(keysStr);
-				keys ??= Array.Empty<string>();
-				return keys;
-			}
-			else
+		private static void SaveCollectionKeys(string[] pKeys)
+		{
+			var keys = GetSavedCollectionKeys();
+			foreach (string pKey in pKeys)
 			{
-				var keys = new string[collections.Count];
-				int i = 0;
-				foreach (var pair in collections)
-				{
-					keys[i] = pair.Key;
-					i++;
-				}
-				return keys;
+				foreach (string key in keys)
+					if (key == pKey)
+						break;
+				keys.Add(pKey);
 			}
+			PlayerPrefs.SetString(COLLECTIONS, JsonHelper.ToJson(keys));
+		}
+
+		private static List<string> GetSavedCollectionKeys()
+		{
+			string keysStr = PlayerPrefs.GetString(COLLECTIONS);
+			if (string.IsNullOrEmpty(keysStr))
+				return new List<string>();
+			var keys = JsonHelper.ToList<string>(keysStr);
+			keys ??= new List<string>();
+			return keys;
+		}
+		
+		public static List<string> GetCollectionKeys()
+		{
+			return collections.Count == 0 ? GetSavedCollectionKeys() : collections.Keys.ToList();
 		}
 		
 		/// <summary>
@@ -106,16 +106,21 @@ namespace RCore.Data.JObject
 
 		public static void DeleteAll()
 		{
-			if (Application.isPlaying)
-			{
-				Debug.LogError("Could not Delete Data when Playing!");
-				return;
-			}
-
-			var saverKeys = GetCollectionKeys();
-			for (int i = 0; i < saverKeys.Length; i++)
+			var saverKeys = GetSavedCollectionKeys();
+			for (int i = 0; i < saverKeys.Count; i++)
 				PlayerPrefs.DeleteKey(saverKeys[i]);
 			collections.Clear();
+		}
+
+		public static void Delete(string key)
+		{
+			var keys = GetSavedCollectionKeys();
+			if (keys.Remove(key))
+			{
+				PlayerPrefs.SetString(COLLECTIONS, JsonHelper.ToJson(keys));
+				PlayerPrefs.DeleteKey(key);
+			}
+			collections.Remove(key);
 		}
 
 		public static void Import(string jsonData)
@@ -124,17 +129,17 @@ namespace RCore.Data.JObject
 			foreach (var keyValue in collectionsJson)
 			{
 				PlayerPrefs.SetString(keyValue.Key, keyValue.Value);
-				SaveCollectionKey(keyValue.Key);
 				var collection = GetCollection(keyValue.Key);
 				collection?.Load(keyValue.Value);
 #if UNITY_EDITOR
 				Debug.Log($"Import {keyValue.Key}\n{keyValue.Value}");
 #endif
 			}
+			SaveCollectionKeys(collectionsJson.Keys.ToArray());
 			PlayerPrefs.Save();
 		}
 
-		public static void Log()
+		public static void CopyAllData()
 		{
 			var json = JsonConvert.SerializeObject(GetAllData());
 			Debug.Log(json);

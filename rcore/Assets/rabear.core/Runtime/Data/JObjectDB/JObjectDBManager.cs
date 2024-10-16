@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RCore.Common;
+using UnityEngine.Serialization;
 
 namespace RCore.Data.JObject
 {
@@ -15,7 +16,7 @@ namespace RCore.Data.JObject
 		protected List<JObjectCollection> m_collections = new List<JObjectCollection>();
 		protected List<IJObjectController> m_controllers = new List<IJObjectController>();
 	
-		public UserSessionData userSessionData;
+		public UserSessionCollection userSession;
 		public UserSessionHandler userSessionHandler;
 		
 		protected bool m_initialized;
@@ -75,7 +76,7 @@ namespace RCore.Data.JObject
 			if (m_initialized)
 				return;
 
-			userSessionData = CreateCollection<UserSessionData>();
+			userSession = CreateCollection<UserSessionCollection>("UserSession");
 			userSessionHandler = CreateController<UserSessionHandler, JObjectDBManager>();
 			Load();
 			PostLoad();
@@ -133,10 +134,10 @@ namespace RCore.Data.JObject
 		public virtual int GetOfflineSeconds()
 		{
 			int offlineSeconds = 0;
-			if (userSessionData.lastActive > 0)
+			if (userSession.lastActive > 0)
 			{
 				int utcNowTimestamp = TimeHelper.GetUtcNowTimestamp();
-				offlineSeconds = utcNowTimestamp - userSessionData.lastActive;
+				offlineSeconds = utcNowTimestamp - userSession.lastActive;
 			}
 			return offlineSeconds;
 		}
@@ -150,7 +151,7 @@ namespace RCore.Data.JObject
 		/// </summary>
 		protected abstract void Load();
 		
-		protected T CreateCollection<T>(string key = null) where T : JObjectCollection, new()
+		protected T CreateCollection<T>(string key) where T : JObjectCollection, new()
 		{
 			if (string.IsNullOrEmpty(key))
 				key = typeof(T).Name;

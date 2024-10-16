@@ -58,8 +58,8 @@ namespace RCore.Data.JObject.Editor
 			});
 			actions.Add(new EditorButton
 			{
-				label = "Log and copy",
-				onPressed = JObjectDB.Log
+				label = "Copy All",
+				onPressed = JObjectDB.CopyAllData
 			});
 			actions.Add(new EditorButton
 			{

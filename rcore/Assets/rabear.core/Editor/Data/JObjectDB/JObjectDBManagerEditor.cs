@@ -35,8 +35,8 @@ namespace RCore.Data.JObject.Editor
 					JObjectDB.Backup(path);
 			}
 				
-			if (GUILayout.Button("Log"))
-				JObjectDB.Log();
+			if (GUILayout.Button("Copy All"))
+				JObjectDB.CopyAllData();
 				
 			if (!Application.isPlaying)
 			{

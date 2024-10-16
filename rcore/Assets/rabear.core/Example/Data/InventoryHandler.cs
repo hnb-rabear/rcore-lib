@@ -1,15 +1,15 @@
 using RCore.Data.JObject;
 
-namespace RCore.Example.Data
+namespace RCore.Example.Data.JObject
 {
-	public class InventoryDataHandler : JObjectHandler<DBManagerExample>
+	public class InventoryHandler : JObjectHandler<DBManagerExample>
 	{
 		public override void OnPause(bool pause, int utcNowTimestamp, int offlineSeconds)
 		{
 		}
 		public override void OnPostLoad(int utcNowTimestamp, int offlineSeconds)
 		{
-			manager.inventoryData.Insert(new InvItemData()
+			manager.inventory.Insert(new InvItemData()
 			{
 				fk = 1,
 				id = 1

@@ -5,9 +5,11 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using RCore.Common;
+using System;
 
 namespace RCore.UI
 {
+    [Obsolete]
     public class UIDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         internal Vector3 preLocalPosition;

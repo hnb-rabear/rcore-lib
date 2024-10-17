@@ -10,9 +10,9 @@ namespace RCore.Common
     /// <summary>
     /// Place gameObjects which never be destroyed as children of this gameObject
     /// </summary>
-    public class DontDestroyGroup : MonoBehaviour
+    public class DontDestroyedGroup : MonoBehaviour
     {
-        private static DontDestroyGroup m_Instance;
+        private static DontDestroyedGroup m_Instance;
 
         private IEnumerator Start()
         {

@@ -2,6 +2,7 @@
  * Author RadBear - nbhung71711@gmail.com - 2017
  **/
 
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,6 +11,7 @@ namespace RCore.UI
     /// <summary>
     /// Drag an item internal UI-Canvas
     /// </summary>
+    [Obsolete]
     public class UIDraggableItem : MonoBehaviour
     {
         public Camera renderCamera;

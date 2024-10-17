@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RCore.Editor
 {
-	public class SearchAndReplaceAssetToolkitWindow : EditorWindow
+	public class SearchAndReplaceAssetWindow : EditorWindow
 	{
 		private Vector2 m_scrollPosition;
 		private SearchAndReplaceAssetToolkit m_searchAndReplaceAssetToolkit;
@@ -21,7 +21,7 @@ namespace RCore.Editor
 		{
 			m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, false);
 			m_searchAndReplaceAssetToolkit ??= SearchAndReplaceAssetToolkit.Load();
-			m_tab = EditorHelper.Tabs(nameof(SearchAndReplaceAssetToolkitWindow), "Replace Sprite", "Cut Sprite Sheet", "Update Image Property", "Replace Object");
+			m_tab = EditorHelper.Tabs(nameof(SearchAndReplaceAssetWindow), "Replace Sprite", "Cut Sprite Sheet", "Update Image Property", "Replace Object");
 			GUILayout.BeginVertical("box");
 			switch (m_tab)
 			{
@@ -45,7 +45,7 @@ namespace RCore.Editor
 		[MenuItem("RCore/Tools/Search And Replace Asset Toolkit")]
 		private static void OpenEditorWindow()
 		{
-			var window = GetWindow<SearchAndReplaceAssetToolkitWindow>("Search And Replace Asset Toolkit", true);
+			var window = GetWindow<SearchAndReplaceAssetWindow>("Search And Replace Asset Toolkit", true);
 			window.Show();
 		}
 	}

@@ -1,0 +1,18 @@
+{
+    "name": "RCore.Sub.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6da4084ae97045c4f83b755aea1383d0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

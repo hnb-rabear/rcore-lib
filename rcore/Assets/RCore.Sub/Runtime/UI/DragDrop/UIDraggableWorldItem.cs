@@ -5,12 +5,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using RCore.Common;
+using System;
 
 namespace RCore.UI
 {
     /// <summary>
     /// Drag an item from UI-Canvas to world
     /// </summary>
+    [Obsolete]
     public class UIDraggableWorldItem : UIDraggableItem
     {
         public GameObject worldObjPrefab;

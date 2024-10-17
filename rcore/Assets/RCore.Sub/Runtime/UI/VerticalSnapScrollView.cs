@@ -222,8 +222,8 @@ namespace RCore.UI
         private void Validate()
         {
 #if UNITY_EDITOR
-            string str = "Cotent Top Right: " + Content.TopRight()
-                + "\nContent Bot Lert: " + Content.BotLeft()
+            string str = "Content Top Right: " + Content.TopRight()
+                + "\nContent Bot Left: " + Content.BotLeft()
                 + "\nContent Center: " + Content.Center()
                 + "\nContent Size" + Content.sizeDelta
                 + "\nContent Pivot" + Content.pivot

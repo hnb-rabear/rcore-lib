@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using RCore.Inspector;
 using Debug = UnityEngine.Debug;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 #if DOTWEEN
 using DG.Tweening;
 #endif
@@ -31,7 +32,8 @@ namespace RCore.UI
 		[SerializeField] private float m_MinSpringTime = 0.5f;
 		[SerializeField] private float m_MaxSpringTime = 1f;
 		[SerializeField] private float m_SpringThreshold = 15;
-		[SerializeField] private bool m_AutoSetMinScollRection = true;
+		[FormerlySerializedAs("m_AutoSetMinScollRection")]
+		[SerializeField] private bool m_AutoSetMinScrollReaction = true;
 		[SerializeField] private float m_MinScrollReaction = 10;
 		[SerializeField] private Vector2 m_TargetPosOffset;
 		[SerializeField] private ScrollRect m_ScrollView;
@@ -45,23 +47,24 @@ namespace RCore.UI
 		[SerializeField, ReadOnly] private int m_FocusedItemIndex = -1;
 		[SerializeField, ReadOnly] private int m_PreviousItemIndex = -1;
 		[SerializeField, ReadOnly] private bool m_IsSnapping;
-		[SerializeField, ReadOnly] private bool m_IsDraging;
+		[FormerlySerializedAs("m_IsDraging")]
+		[SerializeField, ReadOnly] private bool m_IsDragging;
 		[SerializeField, ReadOnly] private bool m_Validated;
 
-		private Vector2 m_PreviousPosition;
-		private float m_DragDistance;
-		private Vector2 m_Velocity;
-		private float m_Distance;
-		private Vector2 m_BeginDragPosition;
-		private bool m_DragFromLeft;
-		private bool m_CheckBoundary;
-		private bool m_CheckStop;
+		private Vector2 m_previousPosition;
+		private float m_dragDistance;
+		private Vector2 m_velocity;
+		private float m_distance;
+		private Vector2 m_beginDragPosition;
+		private bool m_dragFromLeft;
+		private bool m_checkBoundary;
+		private bool m_checkStop;
 
 		private RectTransform Content => m_ScrollView.content;
 		public int FocusedItemIndex => m_FocusedItemIndex;
 		public int TotalItems => m_Items.Count;
 		public bool IsSnapping => m_IsSnapping;
-		public bool IsDragging => m_IsDraging;
+		public bool IsDragging => m_IsDragging;
 		public List<MainMenuScrollItem> Items => m_Items;
 
 		#endregion
@@ -86,7 +89,7 @@ namespace RCore.UI
 
 		private void OnEnable()
 		{
-			m_CheckBoundary = m_ScrollView.movementType == ScrollRect.MovementType.Unrestricted;
+			m_checkBoundary = m_ScrollView.movementType == ScrollRect.MovementType.Unrestricted;
 		}
 
 		private void Update()
@@ -94,26 +97,26 @@ namespace RCore.UI
 			if (!m_Validated || !m_ScrollView.horizontal)
 				return;
 
-			m_Velocity = Content.anchoredPosition - m_PreviousPosition;
-			m_PreviousPosition = Content.anchoredPosition;
+			m_velocity = Content.anchoredPosition - m_previousPosition;
+			m_previousPosition = Content.anchoredPosition;
 
-			if (m_IsDraging || m_IsSnapping)
+			if (m_IsDragging || m_IsSnapping)
 				return;
 
-			float speedX = Mathf.Abs(m_Velocity.x);
+			float speedX = Mathf.Abs(m_velocity.x);
 			if (speedX == 0)
 			{
-				if (m_CheckStop)
+				if (m_checkStop)
 				{
 					FindNearestItem();
-					m_CheckStop = false;
+					m_checkStop = false;
 				}
 				return;
 			}
 			else
-				m_CheckStop = true;
+				m_checkStop = true;
 
-			if (m_CheckBoundary && OutOfBoundary())
+			if (m_checkBoundary && OutOfBoundary())
 			{
 
 			}
@@ -124,7 +127,7 @@ namespace RCore.UI
 					FindNearestItem();
 					int index = m_FocusedItemIndex;
 					var targetPos = m_Items[index].RectTransform.CovertAnchoredPosFromChildToParent(m_ScrollView.content);
-					if (m_DragFromLeft)
+					if (m_dragFromLeft)
 					{
 						if (Content.anchoredPosition.x > targetPos.x + m_MinScrollReaction)
 						{
@@ -172,9 +175,9 @@ namespace RCore.UI
 #if DOTWEEN
 			DOTween.Kill(GetInstanceID());
 #endif
-			m_IsDraging = true;
+			m_IsDragging = true;
 			m_IsSnapping = false;
-			m_BeginDragPosition = Content.anchoredPosition;
+			m_beginDragPosition = Content.anchoredPosition;
 			onScrollStart?.Invoke();
 		}
 
@@ -182,14 +185,14 @@ namespace RCore.UI
 		{
 			if (!m_ScrollView.horizontal)
 				return;
-			if (!m_IsDraging)
+			if (!m_IsDragging)
 				onScrollStart?.Invoke();
-			m_IsDraging = true;
+			m_IsDragging = true;
 			FindNearestItem();
 
-			if (m_BeginDragPosition.x < Content.anchoredPosition.x)
+			if (m_beginDragPosition.x < Content.anchoredPosition.x)
 				m_Items[Mathf.Clamp(m_PreviousItemIndex - 1, 0, m_Items.Count - 1)].Show();
-			else if (m_BeginDragPosition.x > Content.anchoredPosition.x)
+			else if (m_beginDragPosition.x > Content.anchoredPosition.x)
 				m_Items[Mathf.Clamp(m_PreviousItemIndex + 1, 0, m_Items.Count - 1)].Show();
 		}
 
@@ -197,13 +200,13 @@ namespace RCore.UI
 		{
 			if (!m_ScrollView.horizontal)
 				return;
-			m_IsDraging = false;
-			if (m_CheckBoundary && OutOfBoundary())
+			m_IsDragging = false;
+			if (m_checkBoundary && OutOfBoundary())
 				return;
 
 			var endDragPosition = Content.anchoredPosition;
-			m_DragDistance = Mathf.Abs(m_BeginDragPosition.x - endDragPosition.x);
-			m_DragFromLeft = m_BeginDragPosition.x < endDragPosition.x;
+			m_dragDistance = Mathf.Abs(m_beginDragPosition.x - endDragPosition.x);
+			m_dragFromLeft = m_beginDragPosition.x < endDragPosition.x;
 		}
 
 		#endregion
@@ -322,9 +325,9 @@ namespace RCore.UI
 				m_IsSnapping = false;
 
 #if DOTWEEN
-				if (m_Distance == 0)
-					m_Distance = Vector2.Distance(m_PointToCheckDistanceToCenter.position, m_Items[m_FocusedItemIndex].RectTransform.position);
-				float time = m_Distance / (pSpeed / Time.deltaTime);
+				if (m_distance == 0)
+					m_distance = Vector2.Distance(m_PointToCheckDistanceToCenter.position, m_Items[m_FocusedItemIndex].RectTransform.position);
+				float time = m_distance / (pSpeed / Time.deltaTime);
 				if (time == 0)
 					return;
 				if (time < m_MinSpringTime)
@@ -411,17 +414,17 @@ namespace RCore.UI
 			m_FocusedItemIndex = pIndex;
 			onIndexChanged?.Invoke(pIndex);
 
-			if (m_AutoSetMinScollRection)
+			if (m_AutoSetMinScrollReaction)
 				m_MinScrollReaction = m_Items[m_FocusedItemIndex].RectTransform.rect.width / 20f;
 		}
 
 		private void CheckScrollReaction()
 		{
-			if (m_DragDistance > m_MinScrollReaction)
+			if (m_dragDistance > m_MinScrollReaction)
 			{
 				int index = m_FocusedItemIndex;
 				//Get one down item
-				if (m_DragFromLeft)
+				if (m_dragFromLeft)
 				{
 					if (m_ReverseList)
 						index += 1;
@@ -446,15 +449,15 @@ namespace RCore.UI
 
 		private void FindNearestItem()
 		{
-			m_Distance = 1000000;
+			m_distance = 1000000;
 			int nearestItemIndex = 0;
 			for (int i = 0; i < m_Items.Count; i++)
 			{
 				float distance = Vector2.Distance(m_PointToCheckDistanceToCenter.position, m_Items[i].RectTransform.position);
 				distance = Mathf.Abs(distance);
-				if (m_Distance > distance)
+				if (m_distance > distance)
 				{
-					m_Distance = distance;
+					m_distance = distance;
 					nearestItemIndex = i;
 				}
 			}

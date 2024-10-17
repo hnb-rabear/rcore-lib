@@ -33,14 +33,13 @@ namespace RCore.UI
         public Image imgBot;
         public RectTransform testTarget;
 
-        private RectTransform mCurrentTarget;
-        private bool mTweening;
-
-        private Bounds mBounds;
+        private RectTransform m_currentTarget;
+        private bool m_tweening;
+        private Bounds m_bounds;
 
         private void OnEnable()
         {
-            mBounds = rectContainer.Bounds();
+            m_bounds = rectContainer.Bounds();
             imgTop.rectTransform.pivot = new Vector2(0.5f, 1f);
             imgBot.rectTransform.pivot = new Vector2(0.5f, 0f);
             imgLeft.rectTransform.pivot = new Vector2(0, 0.5f);
@@ -71,16 +70,16 @@ namespace RCore.UI
             var holePosition = imgHole.rectTransform.anchoredPosition;
             var holeSizeDelta = imgHole.rectTransform.sizeDelta;
             var holeHalfSize = holeSizeDelta / 2f;
-            float borderLeft = mBounds.min.x;
-            float borderRight = mBounds.max.x;
-            float borderTop = mBounds.max.y;
-            float borderBot = mBounds.min.y;
+            float borderLeft = m_bounds.min.x;
+            float borderRight = m_bounds.max.x;
+            float borderTop = m_bounds.max.y;
+            float borderBot = m_bounds.min.y;
             float layerLeftW = holePosition.x - holeHalfSize.x - borderLeft;
             float layerRightW = borderRight - (holePosition.x + holeHalfSize.x);
             float layerLeftH = holeSizeDelta.y;
             float layerRightH = holeSizeDelta.y;
-            float layerTopW = mBounds.size.x;
-            float layerBotW = mBounds.size.x;
+            float layerTopW = m_bounds.size.x;
+            float layerBotW = m_bounds.size.x;
             float layerTopH = borderTop - (holePosition.y + holeHalfSize.y);
             float layerBotH = holePosition.y - holeHalfSize.y - borderBot;
 
@@ -97,10 +96,10 @@ namespace RCore.UI
             rightLayerPos.y = holeAnchoredPosition.y;
             imgRight.rectTransform.anchoredPosition = rightLayerPos;
 
-            if (mCurrentTarget != null && !mTweening)
+            if (m_currentTarget != null && !m_tweening)
             {
-	            var rect = mCurrentTarget.rect;
-	            var localScale = mCurrentTarget.localScale;
+	            var rect = m_currentTarget.rect;
+	            var localScale = m_currentTarget.localScale;
 	            imgHole.rectTransform.sizeDelta = new Vector2(rect.width * localScale.x, rect.height * localScale.y);
             }
         }
@@ -129,8 +128,8 @@ namespace RCore.UI
         {
             Active(true);
 
-            mBounds = rectContainer.Bounds();
-            mCurrentTarget = pTarget;
+            m_bounds = rectContainer.Bounds();
+            m_currentTarget = pTarget;
 
             var rect = pTarget.rect;
             var fromSize = new Vector2(rect.width, rect.height) * 10;
@@ -176,8 +175,8 @@ namespace RCore.UI
         {
             Active(true);
 
-            mBounds = rectContainer.Bounds();
-            mCurrentTarget = pTarget;
+            m_bounds = rectContainer.Bounds();
+            m_currentTarget = pTarget;
 
             var targetPivot = pTarget.pivot;
             imgHole.rectTransform.position = pTarget.position;
@@ -207,8 +206,8 @@ namespace RCore.UI
         {
             Active(true);
 
-            mCurrentTarget = null;
-            mBounds = rectContainer.Bounds();
+            m_currentTarget = null;
+            m_bounds = rectContainer.Bounds();
 
             var sprite = pTarget.sprite;
             var pivot = sprite.pivot;

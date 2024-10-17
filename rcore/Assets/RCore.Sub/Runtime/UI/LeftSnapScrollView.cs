@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using RCore.Common;
 using RCore.Inspector;
+using UnityEngine.Serialization;
 #if DOTWEEN
 using DG.Tweening;
 #endif
@@ -18,35 +19,35 @@ namespace RCore.UI
         private const float MIN_SPRING_SPEED = 5f;
 
 #pragma warning disable 0649
-        [SerializeField] private ScrollRect mScrollView;
-        [SerializeField] private List<RectTransform> mItems;
-        [SerializeField] private float mSpringSpeed = 10;
-        [SerializeField] private float mMinScrollReaction = 50;
+        [SerializeField] private ScrollRect m_scrollView;
+        [SerializeField] private List<RectTransform> m_items;
+        [SerializeField] private float m_springSpeed = 10;
+        [SerializeField] private float m_scrollReaction = 50;
 
-        [SerializeField, ReadOnly] private int mNearestIndex;
-        [SerializeField, ReadOnly] private bool mIsSnapping;
-        [SerializeField, ReadOnly] private bool mIsDraging;
+        [SerializeField, ReadOnly] private int m_nearestIndex;
+        [SerializeField, ReadOnly] private bool m_isSnapping;
+        [SerializeField, ReadOnly] private bool m_isDragging;
 #pragma warning disable 0649
 
-        private float mContentAnchoredXMin;
-        private float mContentAnchoredXMax;
-        private float mDistance;
+        private float m_contentAnchoredXMin;
+        private float m_contentAnchoredXMax;
+        private float m_distance;
 
-        private Vector2 mPreviousPosition;
-        private Vector2 mVelocity;
-        private Vector2 mBeginDragPosition;
-        private float mDragDistance;
-        private bool mDragLeftToRight;
+        private Vector2 m_previousPosition;
+        private Vector2 m_velocity;
+        private Vector2 m_beginDragPosition;
+        private float m_dragDistance;
+        private bool m_dragLeftToRight;
 
         private void Update()
         {
-            mVelocity = mScrollView.content.anchoredPosition - mPreviousPosition;
-            mPreviousPosition = mScrollView.content.anchoredPosition;
+            m_velocity = m_scrollView.content.anchoredPosition - m_previousPosition;
+            m_previousPosition = m_scrollView.content.anchoredPosition;
 
-            if (mIsSnapping || mIsDraging)
+            if (m_isSnapping || m_isDragging)
                 return;
 
-            float speedX = Mathf.Abs(mVelocity.x);
+            float speedX = Mathf.Abs(m_velocity.x);
             if (speedX == 0)
                 return;
 
@@ -57,13 +58,13 @@ namespace RCore.UI
             }
             else
             {
-                var contentAnchor = mScrollView.content.anchoredPosition;
-                for (int i = 0; i < mItems.Count; i++)
+                var contentAnchor = m_scrollView.content.anchoredPosition;
+                for (int i = 0; i < m_items.Count; i++)
                 {
-                    float width = mItems[i].rect.width;
-                    if (speedX != 0 && speedX < mSpringSpeed)
+                    float width = m_items[i].rect.width;
+                    if (speedX != 0 && speedX < m_springSpeed)
                     {
-                        var itemBorderLeft = mItems[i].BotLeft().x;
+                        var itemBorderLeft = m_items[i].BotLeft().x;
                         itemBorderLeft *= -1;
                         if (contentAnchor.x < itemBorderLeft
                             && contentAnchor.x > itemBorderLeft - width * 0.5f)
@@ -83,14 +84,14 @@ namespace RCore.UI
 
         public void Refresh()
         {
-            mItems = new List<RectTransform>();
-            foreach (RectTransform item in mScrollView.content)
+            m_items = new List<RectTransform>();
+            foreach (RectTransform item in m_scrollView.content)
             {
                 if (item.gameObject.activeSelf)
-                    mItems.Add(item);
+                    m_items.Add(item);
             }
 
-            if (mItems == null || mItems.Count == 0)
+            if (m_items == null || m_items.Count == 0)
             {
                 gameObject.SetActive(false);
                 return;
@@ -99,46 +100,46 @@ namespace RCore.UI
             {
                 TimerEventsInScene.Instance.WaitForSeconds(0.03f, (a) =>
                 {
-                    mContentAnchoredXMin = -100000;
-                    mContentAnchoredXMax = 100000;
-                    for (int i = 0; i < mItems.Count; i++)
+                    m_contentAnchoredXMin = -100000;
+                    m_contentAnchoredXMax = 100000;
+                    for (int i = 0; i < m_items.Count; i++)
                     {
-                        float itemLeftBorder = mItems[i].BotLeft().x;
-                        if (itemLeftBorder < mContentAnchoredXMax)
-                            mContentAnchoredXMax = itemLeftBorder;
+                        float itemLeftBorder = m_items[i].BotLeft().x;
+                        if (itemLeftBorder < m_contentAnchoredXMax)
+                            m_contentAnchoredXMax = itemLeftBorder;
 
-                        float rightBorderX = mItems[i].TopRight().x;
-                        float maxRightContentX = rightBorderX - mScrollView.viewport.rect.width;
-                        if (maxRightContentX > mContentAnchoredXMin)
-                            mContentAnchoredXMin = maxRightContentX;
+                        float rightBorderX = m_items[i].TopRight().x;
+                        float maxRightContentX = rightBorderX - m_scrollView.viewport.rect.width;
+                        if (maxRightContentX > m_contentAnchoredXMin)
+                            m_contentAnchoredXMin = maxRightContentX;
                     }
-                    mContentAnchoredXMax *= -1;
-                    mContentAnchoredXMin *= -1;
-                    mScrollView.StopMovement();
-                    mScrollView.content.SetX(mContentAnchoredXMax);
+                    m_contentAnchoredXMax *= -1;
+                    m_contentAnchoredXMin *= -1;
+                    m_scrollView.StopMovement();
+                    m_scrollView.content.SetX(m_contentAnchoredXMax);
                 });
             }
 #if DOTWEEN
             DOTween.Kill(GetInstanceID());
 #endif
-            mIsDraging = false;
-            mIsSnapping = false;
+            m_isDragging = false;
+            m_isSnapping = false;
         }
 
         private void FindNearestItem()
         {
-            mDistance = 1000000;
-            mNearestIndex = 0;
-            for (int i = 0; i < mItems.Count; i++)
+            m_distance = 1000000;
+            m_nearestIndex = 0;
+            for (int i = 0; i < m_items.Count; i++)
             {
-                float itemAnchoredX = mItems[i].anchoredPosition.x;
-                float itemAnchoredX_left = itemAnchoredX - mItems[mNearestIndex].rect.width * mItems[mNearestIndex].pivot.x;
-                float distanceX = mScrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
+                float itemAnchoredX = m_items[i].anchoredPosition.x;
+                float itemAnchoredX_left = itemAnchoredX - m_items[m_nearestIndex].rect.width * m_items[m_nearestIndex].pivot.x;
+                float distanceX = m_scrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
                 distanceX = Mathf.Abs(distanceX);
-                if (mDistance > distanceX)
+                if (m_distance > distanceX)
                 {
-                    mDistance = distanceX;
-                    mNearestIndex = i;
+                    m_distance = distanceX;
+                    m_nearestIndex = i;
                 }
             }
         }
@@ -148,49 +149,49 @@ namespace RCore.UI
             if (pSpeed < MIN_SPRING_SPEED)
                 pSpeed = MIN_SPRING_SPEED;
 
-            mScrollView.StopMovement();
+            m_scrollView.StopMovement();
 
-            float itemAnchoredX = mItems[mNearestIndex].anchoredPosition.x;
-            float itemBorderLeft = itemAnchoredX - mItems[mNearestIndex].rect.width * mItems[mNearestIndex].pivot.x;
+            float itemAnchoredX = m_items[m_nearestIndex].anchoredPosition.x;
+            float itemBorderLeft = itemAnchoredX - m_items[m_nearestIndex].rect.width * m_items[m_nearestIndex].pivot.x;
             float targetAnchored = itemBorderLeft *= -1;
 
-            if ((itemBorderLeft > mContentAnchoredXMax || itemBorderLeft < mContentAnchoredXMin)
-                && (mScrollView.movementType == ScrollRect.MovementType.Elastic || mScrollView.movementType == ScrollRect.MovementType.Clamped))
+            if ((itemBorderLeft > m_contentAnchoredXMax || itemBorderLeft < m_contentAnchoredXMin)
+                && (m_scrollView.movementType == ScrollRect.MovementType.Elastic || m_scrollView.movementType == ScrollRect.MovementType.Clamped))
             {
                 return;
             }
             else
             {
-                if (targetAnchored > mContentAnchoredXMax)
-                    targetAnchored = mContentAnchoredXMax;
-                if (targetAnchored < mContentAnchoredXMin)
-                    targetAnchored = mContentAnchoredXMin;
+                if (targetAnchored > m_contentAnchoredXMax)
+                    targetAnchored = m_contentAnchoredXMax;
+                if (targetAnchored < m_contentAnchoredXMin)
+                    targetAnchored = m_contentAnchoredXMin;
             }
 
-            var contentAnchored = mScrollView.content.anchoredPosition;
+            var contentAnchored = m_scrollView.content.anchoredPosition;
 
             if (pImediate)
             {
                 contentAnchored.x = targetAnchored;
-                mScrollView.content.anchoredPosition = contentAnchored;
+                m_scrollView.content.anchoredPosition = contentAnchored;
             }
             else
             {
-                mIsSnapping = false;
+                m_isSnapping = false;
 
-                float time = mDistance / (pSpeed / Time.deltaTime);
+                float time = m_distance / (pSpeed / Time.deltaTime);
                 if (time == 0)
                     return;
 
 #if DOTWEEN
                 DOTween.Kill(GetInstanceID());
-                mScrollView.content.DOAnchorPosX(targetAnchored, time)
-                    .OnStart(() => { mIsSnapping = true; })
+                m_scrollView.content.DOAnchorPosX(targetAnchored, time)
+                    .OnStart(() => { m_isSnapping = true; })
                     .OnComplete(() =>
                     {
-                        mIsSnapping = false;
+                        m_isSnapping = false;
                         contentAnchored.x = targetAnchored;
-                        mScrollView.content.anchoredPosition = contentAnchored;
+                        m_scrollView.content.anchoredPosition = contentAnchored;
                     }).SetId(GetInstanceID());
 #else
                 contentAnchored.x = targetAnchored;
@@ -201,28 +202,28 @@ namespace RCore.UI
 
         public void MoveToItem(int pIndex)
         {
-            mScrollView.StopMovement();
+            m_scrollView.StopMovement();
 
-            float itemAnchorX = mItems[pIndex].anchoredPosition.x;
-            float itemBorderLeft = itemAnchorX - mItems[mNearestIndex].rect.width * mItems[mNearestIndex].pivot.x;
+            float itemAnchorX = m_items[pIndex].anchoredPosition.x;
+            float itemBorderLeft = itemAnchorX - m_items[m_nearestIndex].rect.width * m_items[m_nearestIndex].pivot.x;
             float targetAnchor = itemBorderLeft *= -1;
 
-            if ((itemBorderLeft > mContentAnchoredXMax || itemBorderLeft < mContentAnchoredXMin)
-                && (mScrollView.movementType == ScrollRect.MovementType.Elastic || mScrollView.movementType == ScrollRect.MovementType.Clamped))
+            if ((itemBorderLeft > m_contentAnchoredXMax || itemBorderLeft < m_contentAnchoredXMin)
+                && (m_scrollView.movementType == ScrollRect.MovementType.Elastic || m_scrollView.movementType == ScrollRect.MovementType.Clamped))
             {
                 return;
             }
             else
             {
-                if (targetAnchor > mContentAnchoredXMax)
-                    targetAnchor = mContentAnchoredXMax;
-                if (targetAnchor < mContentAnchoredXMin)
-                    targetAnchor = mContentAnchoredXMin;
+                if (targetAnchor > m_contentAnchoredXMax)
+                    targetAnchor = m_contentAnchoredXMax;
+                if (targetAnchor < m_contentAnchoredXMin)
+                    targetAnchor = m_contentAnchoredXMin;
             }
 
-            var contentAnchor = mScrollView.content.anchoredPosition;
+            var contentAnchor = m_scrollView.content.anchoredPosition;
             contentAnchor.x = targetAnchor;
-            mScrollView.content.anchoredPosition = contentAnchor;
+            m_scrollView.content.anchoredPosition = contentAnchor;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -230,24 +231,24 @@ namespace RCore.UI
 #if DOTWEEN
             DOTween.Kill(GetInstanceID());
 #endif
-            mIsDraging = true;
-            mIsSnapping = false;
-            mBeginDragPosition = mScrollView.content.anchoredPosition;
+            m_isDragging = true;
+            m_isSnapping = false;
+            m_beginDragPosition = m_scrollView.content.anchoredPosition;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            mIsDraging = false;
+            m_isDragging = false;
 
             if (OutOfBoundary())
                 return;
 
-            var endDragPosition = mScrollView.content.anchoredPosition;
-            mDragLeftToRight = mBeginDragPosition.x < endDragPosition.x;
-            mDragDistance = Math.Abs(mBeginDragPosition.x - endDragPosition.x);
+            var endDragPosition = m_scrollView.content.anchoredPosition;
+            m_dragLeftToRight = m_beginDragPosition.x < endDragPosition.x;
+            m_dragDistance = Math.Abs(m_beginDragPosition.x - endDragPosition.x);
 
-            float speedX = Math.Abs(mVelocity.x);
-            if (speedX <= mSpringSpeed)
+            float speedX = Math.Abs(m_velocity.x);
+            if (speedX <= m_springSpeed)
             {
                 FindNearestItem();
                 CheckMinScrollReaction();
@@ -257,8 +258,8 @@ namespace RCore.UI
 
         private bool OutOfBoundary()
         {
-            var contentAnchor = mScrollView.content.anchoredPosition;
-            return contentAnchor.x >= mContentAnchoredXMax - 20 || contentAnchor.x <= mContentAnchoredXMin + 20;
+            var contentAnchor = m_scrollView.content.anchoredPosition;
+            return contentAnchor.x >= m_contentAnchoredXMax - 20 || contentAnchor.x <= m_contentAnchoredXMin + 20;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -268,27 +269,27 @@ namespace RCore.UI
 
         private void CheckMinScrollReaction()
         {
-            if (mDragDistance > mMinScrollReaction)
+            if (m_dragDistance > m_scrollReaction)
             {
-                float itemAnchoredX = mItems[mNearestIndex].anchoredPosition.x;
-                float itemAnchoredX_left = itemAnchoredX - mItems[mNearestIndex].rect.width * mItems[mNearestIndex].pivot.x;
+                float itemAnchoredX = m_items[m_nearestIndex].anchoredPosition.x;
+                float itemAnchoredX_left = itemAnchoredX - m_items[m_nearestIndex].rect.width * m_items[m_nearestIndex].pivot.x;
                 //float rightBorderX = itemAnchorX + mItems[mNearestIndex].rect.width * (1 - mItems[mNearestIndex].pivot.x);
                 //float itemCenter = itemLeftBorder + mItems[mNearestIndex].rect.width / 2f;
-                if (mDragLeftToRight
-                    && mScrollView.content.anchoredPosition.x > itemAnchoredX_left * -1
-                    && mNearestIndex > 0)
+                if (m_dragLeftToRight
+                    && m_scrollView.content.anchoredPosition.x > itemAnchoredX_left * -1
+                    && m_nearestIndex > 0)
                 {
-                    mNearestIndex--;
-                    float distanceX = mScrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
-                    mDistance = Mathf.Abs(distanceX);
+                    m_nearestIndex--;
+                    float distanceX = m_scrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
+                    m_distance = Mathf.Abs(distanceX);
                 }
-                else if (!mDragLeftToRight
-                    && mScrollView.content.anchoredPosition.x < itemAnchoredX_left * -1
-                    && mNearestIndex < mItems.Count - 1)
+                else if (!m_dragLeftToRight
+                    && m_scrollView.content.anchoredPosition.x < itemAnchoredX_left * -1
+                    && m_nearestIndex < m_items.Count - 1)
                 {
-                    mNearestIndex++;
-                    float distanceX = mScrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
-                    mDistance = Mathf.Abs(distanceX);
+                    m_nearestIndex++;
+                    float distanceX = m_scrollView.content.anchoredPosition.x - itemAnchoredX_left * -1;
+                    m_distance = Mathf.Abs(distanceX);
                 }
             }
         }

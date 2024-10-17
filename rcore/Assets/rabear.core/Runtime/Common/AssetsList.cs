@@ -2,7 +2,9 @@
  * Author RadBear - nbhung71711 @gmail.com - 2019
  **/
 
+#if UNITY_EDITOR
 using RCore.Editor;
+#endif
 using System.Collections.Generic;
 using UnityEngine;
 

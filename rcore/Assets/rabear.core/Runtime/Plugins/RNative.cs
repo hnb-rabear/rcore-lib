@@ -76,6 +76,10 @@ namespace RCore
 			var args = Array.Empty<jvalue>();
 			return AndroidJNI.CallStaticLongMethod(class_RNative, method_getBootMillis, args);
 		}
+		public static long getSecondsSinceBoot()
+		{
+			return getMillisSinceBoot() / 1000;
+		}
 		public static int getVersionCode()
 		{
 			var contextCls = new AndroidJavaClass("com.unity3d.player.UnityPlayer");

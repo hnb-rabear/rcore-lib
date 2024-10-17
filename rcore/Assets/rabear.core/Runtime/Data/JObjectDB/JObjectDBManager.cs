@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RCore.Common;
-using UnityEngine.Serialization;
 
 namespace RCore.Data.JObject
 {
@@ -14,7 +13,7 @@ namespace RCore.Data.JObject
 		[SerializeField] private bool m_saveOnQuit = true;
 
 		protected List<JObjectCollection> m_collections = new List<JObjectCollection>();
-		protected List<IJObjectController> m_controllers = new List<IJObjectController>();
+		protected List<IJObjectHandler> m_handlers = new List<IJObjectHandler>();
 	
 		public UserSessionCollection userSession;
 		public UserSessionHandler userSessionHandler;
@@ -31,8 +30,8 @@ namespace RCore.Data.JObject
 			if (!m_initialized)
 				return;
 			
-			foreach (var controller in m_controllers)
-				controller.OnUpdate(Time.deltaTime);
+			foreach (var handler in m_handlers)
+				handler.OnUpdate(Time.deltaTime);
 
 			//Save with a delay to prevent too many save calls in a short period of time
 			if (m_saveCountdown > 0)
@@ -52,8 +51,8 @@ namespace RCore.Data.JObject
 			int offlineSeconds = 0;
 			if (!pause)
 				offlineSeconds = GetOfflineSeconds();
-			foreach (var controller in m_controllers)
-				controller.OnPause(pause, utcNowTimestamp, offlineSeconds);
+			foreach (var handler in m_handlers)
+				handler.OnPause(pause, utcNowTimestamp, offlineSeconds);
 			if (pause && m_saveOnPause)
 				Save(true);
 		}
@@ -94,8 +93,8 @@ namespace RCore.Data.JObject
 				if (Time.unscaledTime - m_lastSave < 0.2f)
 					return;
 				int utcNowTimestamp = TimeHelper.GetUtcNowTimestamp();
-				foreach (var collection in m_controllers)
-					collection.OnPreSave(utcNowTimestamp);
+				foreach (var handler in m_handlers)
+					handler.OnPreSave(utcNowTimestamp);
 				foreach (var collection in m_collections)
 					collection.Save();
 				m_saveDelayCustom = 0; // Reset save delay custom
@@ -166,7 +165,7 @@ namespace RCore.Data.JObject
 			var newController = Activator.CreateInstance<T>();
 			newController.manager = this as M;
 			
-			m_controllers.Add(newController);
+			m_handlers.Add(newController);
 			return newController;
 		}
 
@@ -174,8 +173,8 @@ namespace RCore.Data.JObject
 		{
 			int offlineSeconds = GetOfflineSeconds();
 			var utcNowTimestamp = TimeHelper.GetUtcNowTimestamp();
-			foreach (var controller in m_controllers)
-				controller.OnPostLoad(utcNowTimestamp, offlineSeconds);
+			foreach (var handler in m_handlers)
+				handler.OnPostLoad(utcNowTimestamp, offlineSeconds);
 		}
 	}
 }

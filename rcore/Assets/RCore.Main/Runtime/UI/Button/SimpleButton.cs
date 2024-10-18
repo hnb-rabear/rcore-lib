@@ -65,7 +65,7 @@ namespace RCore.UI
 					serializedObject.ApplyModifiedProperties();
 			}
 
-			[MenuItem("RCore/UI/Replace Button By SimpleButton")]
+			[MenuItem("GameObject/RCore/UI/Replace Button By SimpleButton")]
 			private static void ReplaceButton()
 			{
 				var gameObjects = Selection.gameObjects;
@@ -77,7 +77,7 @@ namespace RCore.UI
 						var btn = buttons[j];
 						if (btn is not SimpleButton)
 						{
-							var obj = btn.gameObject;
+							var go = btn.gameObject;
 							var onClick = btn.onClick;
 							var enabled = btn.enabled;
 							var interactable = btn.interactable;
@@ -85,13 +85,14 @@ namespace RCore.UI
 							var targetGraphic = btn.targetGraphic;
 							var colors = btn.colors;
 							DestroyImmediate(btn);
-							var newBtn = obj.AddComponent<SimpleButton>();
+							var newBtn = go.AddComponent<SimpleButton>();
 							newBtn.onClick = onClick;
 							newBtn.enabled = enabled;
 							newBtn.interactable = interactable;
 							newBtn.transition = transition;
 							newBtn.targetGraphic = targetGraphic;
 							newBtn.colors = colors;
+							EditorUtility.SetDirty(go);
 						}
 					}
 				}

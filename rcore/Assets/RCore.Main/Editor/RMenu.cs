@@ -2,6 +2,7 @@
  * Author RadBear - Nguyen Ba Hung - nbhung71711@gmail.com
  **/
 
+using RCore.Common;
 using RCore.Editor.Tool;
 using System.Diagnostics;
 using System.IO;
@@ -185,6 +186,34 @@ namespace RCore.Editor
 		public static void OpenSearchAndReplaceAssetWindow()
 		{
 			SearchAndReplaceAssetWindow.ShowWindow();
+		}
+		
+		[MenuItem("GameObject/RCore/UI/Perfect Image pixels per unit multiplier (W)")]
+		public static void PerfectRatioImagesByWidth()
+		{
+			RUtil.PerfectRatioImagesByWidth(Selection.gameObjects);
+		}
+
+		[MenuItem("GameObject/RCore/UI/Perfect Image pixels per unit multiplier (H)")]
+		public static void PerfectRatioImagesByHeight()
+		{
+			RUtil.PerfectRatioImagesByHeight(Selection.gameObjects);
+		}
+
+		[MenuItem("GameObject/RCore/UI/Replace Text By TextMeshProUGUI")]
+		public static void ReplaceTextsByTextTMP()
+		{
+			EditorHelper.ReplaceTextsByTextTMP(Selection.gameObjects);
+		}
+
+		[MenuItem("GameObject/RCore/Reorder sorting of SpriteRenderers")]
+		public static void ReorderSortingOfSpriteRenderers()
+		{
+			foreach (var target in Selection.gameObjects)
+			{
+				ComponentHelper.ReorderSortingOfSpriteRenderers(target.GetComponentsInChildren<SpriteRenderer>(true));
+				EditorUtility.SetDirty(target);
+			}
 		}
 	}
 }

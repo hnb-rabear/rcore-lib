@@ -21,20 +21,10 @@ namespace RCore.Editor.Tool
 		private void OnGUI()
 		{
 			m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition, false, false);
-
-			EditorHelper.SeparatorBox();
+			
 			DrawUtilities();
-
-			EditorHelper.SeparatorBox();
 			DrawRendererUtilities();
-
-			EditorHelper.SeparatorBox();
 			DrawUIUtilities();
-
-			EditorHelper.SeparatorBox();
-			DrawMathUtilities();
-
-			EditorHelper.SeparatorBox();
 			DrawGenerators();
 
 			GUILayout.EndScrollView();
@@ -50,7 +40,6 @@ namespace RCore.Editor.Tool
 			EditorHelper.HeaderFoldout("Utilities", "", () =>
 			{
 				ReplaceGameObjectsInScene();
-				FindGameObjectsMissingScript();
 				FindObjectsByGuid();
 			});
 		}
@@ -69,57 +58,6 @@ namespace RCore.Editor.Tool
 					if (GUILayout.Button("Replace"))
 						EditorHelper.ReplaceGameObjectsInScene(ref m_ReplaceableGameObjects, m_Prefabs);
 				}, Color.white, true);
-		}
-
-		private bool m_AlsoChildren;
-
-		private void FindGameObjectsMissingScript()
-		{
-			if (EditorHelper.HeaderFoldout("Find GameObjects missing script"))
-			{
-				m_AlsoChildren = EditorHelper.Toggle(m_AlsoChildren, "Also Children of children");
-				if (!EditorHelper.HasSelectedGameObject(true))
-					return;
-
-				if (EditorHelper.Button("Scan"))
-				{
-					var invalidObjs = new List<GameObject>();
-					var objs = Selection.gameObjects;
-					for (int i = 0; i < objs.Length; i++)
-					{
-						var components = objs[i].GetComponents<Component>();
-						for (int j = components.Length - 1; j >= 0; j--)
-						{
-							if (components[j] == null)
-							{
-								Debug.Log(objs[i].gameObject.name + " is missing component! Let clear it!");
-								invalidObjs.Add(objs[i]);
-								GameObjectUtility.RemoveMonoBehavioursWithMissingScript(objs[i].gameObject);
-							}
-						}
-
-						if (m_AlsoChildren)
-						{
-							var children = objs[i].GetAllChildren();
-							for (int k = children.Count - 1; k >= 0; k--)
-							{
-								var childComponents = children[k].GetComponents<Component>();
-								for (int j = childComponents.Length - 1; j >= 0; j--)
-								{
-									if (childComponents[j] == null)
-									{
-										Debug.Log(children[k].gameObject.name + " is missing component! Let clear it!");
-										invalidObjs.Add(objs[i]);
-										GameObjectUtility.RemoveMonoBehavioursWithMissingScript(children[k].gameObject);
-									}
-								}
-							}
-						}
-					}
-
-					Selection.objects = invalidObjs.ToArray();
-				}
-			}
 		}
 
 		private string m_Guid;
@@ -157,7 +95,6 @@ namespace RCore.Editor.Tool
 				DisplayMeshInfos();
 				CombineMeshes();
 				AlignCenterMeshRendererObj();
-				FixSpriteRendererSortingOrder();
 			});
 		}
 
@@ -308,46 +245,6 @@ namespace RCore.Editor.Tool
 			}
 		}
 
-		private static void FixSpriteRendererSortingOrder()
-		{
-			if (EditorHelper.HeaderFoldout("Fix Sprite Renderer Sorting Order"))
-			{
-				if (!EditorHelper.HasSelectedGameObject(true))
-					return;
-				
-				if (EditorHelper.Button("Fix Sprite Renderer Sorting Order"))
-				{
-					foreach (var target in Selection.gameObjects)
-					{
-						SortSortingOrderNumber(target.GetComponentsInChildren<SpriteRenderer>(true));
-						EditorUtility.SetDirty(target);
-					}
-					AssetDatabase.SaveAssets();
-				}
-			}
-		}
-
-		public static void SortSortingOrderNumber(SpriteRenderer[] pItems)
-		{
-			var dict = new Dictionary<SpriteRenderer, int>();
-			foreach (var item in pItems)
-				dict.Add(item, item.sortingOrder);
-
-			var sortedDict = dict.OrderBy(x => x.Value);
-
-			int order = -1;
-			int lastSortingOrder = -1;
-			foreach (var item in sortedDict)
-			{
-				if (lastSortingOrder < item.Key.sortingOrder)
-				{
-					order++;
-					lastSortingOrder = item.Key.sortingOrder;
-				}
-				item.Key.sortingOrder = order;
-			}
-		}
-
 #endregion
 
 		//===================================================================================================
@@ -375,8 +272,6 @@ namespace RCore.Editor.Tool
 				ChangeButtonsTransitionColor();
 				ChangeTextsFont();
 				ChangeTMPTextsFont();
-				ReplaceTextByTextTMP();
-				PerfectRatioImages();
 				ConvertSpriteRendererToImage();
 			});
 		}
@@ -657,7 +552,7 @@ namespace RCore.Editor.Tool
 
 				if (EditorHelper.Button("Scan"))
 				{
-					m_Buttons = EditorHelper.FindComponents<Button>((button) => button.image != null && button.image.color != Color.clear);
+					m_Buttons = EditorHelper.FindComponents<Button>(Selection.gameObjects, button => button.image != null && button.image.color != Color.clear);
 				}
 
 				if (m_Buttons != null && m_Buttons.Count > 0)
@@ -739,7 +634,7 @@ namespace RCore.Editor.Tool
 
 				if (EditorHelper.Button("Scan"))
 				{
-					m_Buttons = EditorHelper.FindComponents<Button>((button) => button.image != null && button.image.sprite != null && button.image.color != Color.clear);
+					m_Buttons = EditorHelper.FindComponents<Button>(Selection.gameObjects, button => button.image != null && button.image.sprite != null && button.image.color != Color.clear);
 				}
 
 				if (m_Buttons != null && m_Buttons.Count > 0)
@@ -798,7 +693,7 @@ namespace RCore.Editor.Tool
 				}
 
 				if (EditorHelper.Button("Scan Texts"))
-					m_Texts = EditorHelper.FindComponents<Text>(null);
+					m_Texts = EditorHelper.FindComponents<Text>(Selection.gameObjects, null);
 
 				if (m_Texts != null && m_Texts.Count > 0)
 				{
@@ -849,7 +744,7 @@ namespace RCore.Editor.Tool
 				}
 
 				if (EditorHelper.Button("Scan Texts"))
-					m_TMPTexts = EditorHelper.FindComponents<TextMeshProUGUI>(null);
+					m_TMPTexts = EditorHelper.FindComponents<TextMeshProUGUI>(Selection.gameObjects, null);
 
 				if (m_TMPTexts != null && m_TMPTexts.Count > 0)
 				{
@@ -881,37 +776,6 @@ namespace RCore.Editor.Tool
 				}
 
 				GUILayout.EndVertical();
-			}
-		}
-
-		private static void ReplaceTextByTextTMP()
-		{
-			if (EditorHelper.HeaderFoldout("Replace Text By TextMeshProUGUI"))
-			{
-                if (!EditorHelper.HasSelectedGameObject(true))
-					return;
-
-				if (EditorHelper.Button("Replace Texts"))
-					EditorHelper.ReplaceTextsByTextTMP();
-			}
-		}
-
-		private static void PerfectRatioImages()
-		{
-			if (EditorHelper.HeaderFoldout("Perfect Ratio Images"))
-			{
-				if (!EditorHelper.HasSelectedGameObject(true))
-					return;
-
-				if (EditorHelper.Button("Set Perfect Width"))
-				{
-					RUtil.PerfectRatioImagesByWidth(Selection.gameObjects);
-				}
-
-				if (EditorHelper.Button("Set Perfect Height"))
-				{
-					RUtil.PerfectRatioImagesByHeight(Selection.gameObjects);
-				}
 			}
 		}
 
@@ -950,31 +814,6 @@ namespace RCore.Editor.Tool
 					}
 				}
 			}
-		}
-
-#endregion
-
-		//===================================================================================================
-
-#region Math Utilities
-
-		private DayOfWeek m_NextDayOfWeek;
-
-		private void DrawMathUtilities()
-		{
-			EditorHelper.HeaderFoldout("Math Utilities", "", GetSecondsTillEndDayOfWeek);
-		}
-
-		private void GetSecondsTillEndDayOfWeek()
-		{
-			EditorHelper.BoxVertical("Seconds till day of week", () =>
-			{
-				m_NextDayOfWeek = EditorHelper.DropdownListEnum(m_NextDayOfWeek, "Day of week");
-				var seconds = TimeHelper.GetSecondsTillDayOfWeek(m_NextDayOfWeek, DateTime.Now);
-				EditorHelper.TextField(seconds.ToString(), "Seconds till day of week", 200);
-				seconds = TimeHelper.GetSecondsTillEndDayOfWeek(m_NextDayOfWeek, DateTime.Now);
-				EditorHelper.TextField(seconds.ToString(), "Seconds till end day of week", 200);
-			}, Color.white, true);
 		}
 
 #endregion
@@ -1130,11 +969,15 @@ namespace RCore.Editor.Tool
 			if (EditorHelper.HeaderFoldout("Generate Characters Map"))
 			{
 				if (EditorHelper.ButtonColor("Add Txt File", Color.green))
+				{
 					m_TextFiles.Add(null);
+					RemoveDuplicateCharacters();
+				}
 				EditorHelper.DragDropBox<TextAsset>("TextAsset", objs =>
 				{
 					foreach (var obj in objs)
 						m_TextFiles.Add(obj);
+					RemoveDuplicateCharacters();
 				});
 				for (int i = 0; i < m_TextFiles.Count; i++)
 				{
@@ -1146,7 +989,7 @@ namespace RCore.Editor.Tool
 						m_TextFiles.RemoveAt(i);
 					EditorGUILayout.EndHorizontal();
 				}
-				if (EditorHelper.Button("Remove Duplicate Characters"))
+				void RemoveDuplicateCharacters()
 				{
 					string combineStr = "";
 					foreach (var textAsset in m_TextFiles)

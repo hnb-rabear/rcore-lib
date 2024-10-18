@@ -12,6 +12,30 @@ using UnityEngine;
 
 namespace RCore.Common
 {
+	public static class ComponentHelper
+	{
+		public static void ReorderSortingOfSpriteRenderers(SpriteRenderer[] pItems)
+		{
+			var dict = new Dictionary<SpriteRenderer, int>();
+			foreach (var item in pItems)
+				dict.Add(item, item.sortingOrder);
+
+			var sortedDict = dict.OrderBy(x => x.Value);
+
+			int order = -1;
+			int lastSortingOrder = -1;
+			foreach (var item in sortedDict)
+			{
+				if (lastSortingOrder < item.Key.sortingOrder)
+				{
+					order++;
+					lastSortingOrder = item.Key.sortingOrder;
+				}
+				item.Key.sortingOrder = order;
+			}
+		}
+	}
+	
 	public static class ComponentExtension
 	{
 		public static void SetAlpha(this UnityEngine.UI.Image img, float alpha)
@@ -308,7 +332,7 @@ namespace RCore.Common
 			var component = gameObject.GetComponent<T>();
 			return component != null ? component : gameObject.AddComponent<T>();
 		}
-
+		
 #region Simple Pool
 
 		public static T Obtain<T>(this List<T> pool, GameObject prefab, Transform parent, string name = null) where T : Component

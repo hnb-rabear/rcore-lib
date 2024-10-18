@@ -3078,10 +3078,9 @@ namespace RCore.Editor
 
         private static bool IsDirectory(string path) => File.GetAttributes(path).HasFlag(FileAttributes.Directory);
 
-        public static Dictionary<GameObject, List<T>> FindComponents<T>(ConditionalDelegate<T> pValidCondition) where T : Component
+        public static Dictionary<GameObject, List<T>> FindComponents<T>(GameObject[] objs, ConditionalDelegate<T> pValidCondition) where T : Component
         {
             var allComponents = new Dictionary<GameObject, List<T>>();
-            var objs = Selection.gameObjects;
             for (int i = 0; i < objs.Length; i++)
             {
                 var components = objs[i].gameObject.GetComponentsInChildren<T>(true);
@@ -3102,30 +3101,34 @@ namespace RCore.Editor
             return allComponents;
         }
 
-        public static void ReplaceTextsByTextTMP()
+        public static void ReplaceTextsByTextTMP(params GameObject[] gos)
         {
-            var textsDict = FindComponents<Text>(null);
+            var textsDict = FindComponents<Text>(gos, null);
             if (textsDict != null)
                 foreach (var item in textsDict)
                 {
                     for (int i = item.Value.Count - 1; i >= 0; i--)
                     {
-                        var gameObj = item.Value[i].gameObject;
+                        var go = item.Value[i].gameObject;
                         var content = item.Value[i].text;
                         var fontSize = item.Value[i].fontSize;
                         var alignment = item.Value[i].alignment;
                         var bestFit = item.Value[i].resizeTextForBestFit;
+                        var horizontalOverflow = item.Value[i].horizontalOverflow;
+                        var verticalOverflow = item.Value[i].verticalOverflow;
+                        var raycastTarget = item.Value[i].raycastTarget;
                         var color = item.Value[i].color;
-                        if (item.Value[i].gameObject.TryGetComponent(out UnityEngine.UI.Outline outline))
+                        if (item.Value[i].gameObject.TryGetComponent(out Outline outline))
                             Object.DestroyImmediate(outline);
                         if (item.Value[i].gameObject.TryGetComponent(out Shadow shadow))
                             Object.DestroyImmediate(shadow);
                         Object.DestroyImmediate(item.Value[i]);
-                        var textTMP = gameObj.AddComponent<TextMeshProUGUI>();
+                        var textTMP = go.AddComponent<TextMeshProUGUI>();
                         textTMP.text = content;
                         textTMP.fontSize = fontSize;
                         textTMP.enableAutoSizing = bestFit;
                         textTMP.color = color;
+                        textTMP.raycastTarget = raycastTarget;
                         switch (alignment)
                         {
                             case TextAnchor.MiddleLeft:
@@ -3158,8 +3161,11 @@ namespace RCore.Editor
                                 textTMP.alignment = TextAlignmentOptions.TopRight;
                                 break;
                         }
-
-                        Debug.Log($"Replace Text in GameObject {gameObj.name}");
+                        textTMP.enableWordWrapping = horizontalOverflow == HorizontalWrapMode.Wrap;
+                        if (verticalOverflow == VerticalWrapMode.Truncate)
+                            textTMP.overflowMode = TextOverflowModes.Truncate;
+                        Debug.Log($"Replace Text in GameObject {go.name}");
+                        EditorUtility.SetDirty(go);
                     }
                 }
         }

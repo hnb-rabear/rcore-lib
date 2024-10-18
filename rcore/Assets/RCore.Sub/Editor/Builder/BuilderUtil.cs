@@ -374,13 +374,6 @@ namespace RCore.Editor
             Build(profile);
         }
 
-        [MenuItem("RCore/Tools/[Obsoleted] Builder")]
-        private static void OpenDevEditorWindow()
-        {
-            var window = EditorWindow.GetWindow<BuilderWindow>("Builder", true);
-            window.Show();
-        }
-
         /*
         [MenuItem("RCore/Tools/Build Now")]
         static void BuildCurrent()

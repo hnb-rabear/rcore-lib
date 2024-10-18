@@ -18,10 +18,8 @@ namespace RCore.Editor.Tool
 
 		private bool m_isTransparent;
 
-		[MenuItem("RCore/Tools/Screenshot Taker")]
 		public static void ShowWindow()
 		{
-			//Show existing window instance. If one doesn't exist, make one.
 			var editorWindow = GetWindow(typeof(ScreenshotTaker));
 			editorWindow.autoRepaintOnSceneChange = true;
 			editorWindow.Show();

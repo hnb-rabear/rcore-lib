@@ -6,23 +6,21 @@ namespace RCore.Editor.Data.JObject
 {
 	public static class JObjectDBMenu
 	{
-		private const int INDEX = 120;
-		
-		[MenuItem("RCore/JObjectDB/Open JObjectDB Window %_#_'", priority = INDEX + 1)]
+		[MenuItem("RCore/JObjectDB/JObjectDB Editor %_#_'", priority = RMenu.GROUP_4 + 1)]
 		private static void OpenDataWindow()
 		{
 			var window = EditorWindow.GetWindow<JObjectDBWindow>("JObjectDB", true);
 			window.Show();
 		}
 
-		[MenuItem("RCore/JObjectDB/Clear", priority = INDEX + 2)]
+		[MenuItem("RCore/JObjectDB/Clear", priority = RMenu.GROUP_4 + 2)]
 		private static void ClearSaveData()
 		{
 			if (EditorHelper.ConfirmPopup())
 				JObjectDB.DeleteAll();
 		}
 
-		[MenuItem("RCore/JObjectDB/Backup", priority = INDEX + 3)]
+		[MenuItem("RCore/JObjectDB/Backup", priority = RMenu.GROUP_4 + 3)]
 		private static void BackUpData()
 		{
 			string path = EditorUtility.SaveFilePanelInProject("Save Backup", "PlayerData_" + System.DateTime.Now.ToString().Replace("/", "_").Replace(":", "_")
@@ -31,7 +29,7 @@ namespace RCore.Editor.Data.JObject
 				JObjectDB.Backup(path);
 		}
 
-		[MenuItem("RCore/JObjectDB/Restore", priority = INDEX + 4)]
+		[MenuItem("RCore/JObjectDB/Restore", priority = RMenu.GROUP_4 + 4)]
 		private static void RestoreData()
 		{
 			string path = EditorUtility.OpenFilePanel("Select Backup Data File", Application.dataPath, "txt");
@@ -39,7 +37,7 @@ namespace RCore.Editor.Data.JObject
 				JObjectDB.Restore(path);
 		}
 
-		[MenuItem("RCore/JObjectDB/Copy All", priority = INDEX + 5)]
+		[MenuItem("RCore/JObjectDB/Copy All", priority = RMenu.GROUP_4 + 5)]
 		private static void LogData()
 		{
 			JObjectDB.CopyAllData();

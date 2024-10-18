@@ -38,9 +38,8 @@ namespace RCore.Editor.Tool
 			GUILayout.EndVertical();
 			GUILayout.EndScrollView();
 		}
-
-		[MenuItem("RCore/Tools/Search And Replace Asset Toolkit")]
-		private static void OpenEditorWindow()
+		
+		public static void ShowWindow()
 		{
 			var window = GetWindow<SearchAndReplaceAssetWindow>("Search And Replace Asset Toolkit", true);
 			window.Show();

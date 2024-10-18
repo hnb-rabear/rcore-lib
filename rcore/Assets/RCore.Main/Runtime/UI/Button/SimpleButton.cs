@@ -48,7 +48,7 @@ namespace RCore.UI
 				EditorGUILayout.BeginVertical("box");
 				{
 					var label = EditorHelper.SerializeField(serializedObject, "m_label");
-					var text = label.objectReferenceValue as UnityEngine.UI.Text;
+					var text = label.objectReferenceValue as Text;
 					if (text != null)
 					{
 						var textObj = new SerializedObject(text);
@@ -71,15 +71,27 @@ namespace RCore.UI
 				var gameObjects = Selection.gameObjects;
 				for (int i = 0; i < gameObjects.Length; i++)
 				{
-					var buttons = gameObjects[i].GetComponentsInChildren<UnityEngine.UI.Button>(true);
+					var buttons = gameObjects[i].GetComponentsInChildren<Button>(true);
 					for (int j = 0; j < buttons.Length; j++)
 					{
 						var btn = buttons[j];
 						if (btn is not SimpleButton)
 						{
 							var obj = btn.gameObject;
+							var onClick = btn.onClick;
+							var enabled = btn.enabled;
+							var interactable = btn.interactable;
+							var transition = btn.transition;
+							var targetGraphic = btn.targetGraphic;
+							var colors = btn.colors;
 							DestroyImmediate(btn);
-							obj.AddComponent<SimpleButton>();
+							var newBtn = obj.AddComponent<SimpleButton>();
+							newBtn.onClick = onClick;
+							newBtn.enabled = enabled;
+							newBtn.interactable = interactable;
+							newBtn.transition = transition;
+							newBtn.targetGraphic = targetGraphic;
+							newBtn.colors = colors;
 						}
 					}
 				}

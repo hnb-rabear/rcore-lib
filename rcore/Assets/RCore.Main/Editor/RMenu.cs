@@ -2,6 +2,7 @@
  * Author RadBear - Nguyen Ba Hung - nbhung71711@gmail.com
  **/
 
+using RCore.Editor.Tool;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
@@ -9,21 +10,28 @@ using UnityEngine;
 
 namespace RCore.Editor
 {
-	public class RMenu : UnityEditor.Editor
+	public static partial class RMenu
 	{
-		private const int INDEX = 0;
+		public const int GROUP_1 = 0;
+		public const int GROUP_2 = 20;
+		public const int GROUP_3 = 40;
+		public const int GROUP_4 = 60;
+		public const int GROUP_5 = 80;
+		public const int GROUP_6 = 100;
 
 		private const string ALT = "&";
 		private const string SHIFT = "#";
 		private const string CTRL = "%";
 
-		[MenuItem("RCore/Open Env Setting %_&_j", priority = INDEX)]
+		[MenuItem("RCore/Env Setting %_&_j", priority = GROUP_1 + 1)]
 		private static void OpenEnvSetting()
 		{
 			Selection.activeObject = EnvSetting.Instance;
 		}
 		
-		[MenuItem("RCore/Asset Database/Save Assets " + SHIFT + "_1", priority = INDEX + 1)]
+		//==========================================================
+		
+		[MenuItem("RCore/Asset Database/Save Assets " + SHIFT + "_1", priority = GROUP_2 + 1)]
 		private static void SaveAssets()
 		{
 			var objs = Selection.objects;
@@ -34,19 +42,19 @@ namespace RCore.Editor
 			AssetDatabase.SaveAssets();
 		}
 
-		[MenuItem("RCore/Asset Database/Refresh Prefabs in folder", priority = INDEX +  2)]
+		[MenuItem("RCore/Asset Database/Refresh Prefabs in folder", priority = GROUP_2 +  2)]
 		private static void RefreshPrefabs()
 		{
 			RefreshAssets("t:GameObject");
 		}
 
-		[MenuItem("RCore/Asset Database/Refresh ScriptableObjects in folder", priority = INDEX +  3)]
+		[MenuItem("RCore/Asset Database/Refresh ScriptableObjects in folder", priority = GROUP_2 +  3)]
 		private static void RefreshScriptableObjects()
 		{
 			RefreshAssets("t:ScriptableObject");
 		}
 
-		[MenuItem("RCore/Asset Database/Refresh Assets in folder", priority = INDEX +  4)]
+		[MenuItem("RCore/Asset Database/Refresh Assets in folder", priority = GROUP_2 + 4)]
 		private static void RefreshAll()
 		{
 			RefreshAssets("t:GameObject t:ScriptableObject");
@@ -69,7 +77,7 @@ namespace RCore.Editor
 
 		//==========================================================
 
-		[MenuItem("RCore/Group Scene Objects " + ALT + "_F1", priority = INDEX + 21)]
+		[MenuItem("RCore/Group Scene Objects " + ALT + "_F1", priority = GROUP_3 + 1)]
 		private static void GroupSceneObjects()
 		{
 			var objs = Selection.gameObjects;
@@ -84,7 +92,7 @@ namespace RCore.Editor
 			}
 		}
 
-		[MenuItem("RCore/Ungroup Scene Objects " + ALT + "_F2", priority = INDEX + 22)]
+		[MenuItem("RCore/Ungroup Scene Objects " + ALT + "_F2", priority = GROUP_3 + 2)]
 		private static void UngroupSceneObjects()
 		{
 			var objs = Selection.gameObjects;
@@ -97,7 +105,7 @@ namespace RCore.Editor
 
 		//==========================================================
 
-		[MenuItem("RCore/Clear PlayerPrefs", priority = INDEX + 61)]
+		[MenuItem("RCore/Clear PlayerPrefs", priority = GROUP_4 + 1)]
 		private static void ClearPlayerPrefs()
 		{
 			if (EditorHelper.ConfirmPopup("Clear PlayerPrefs"))
@@ -106,7 +114,7 @@ namespace RCore.Editor
 		
 		//==========================================================
 		
-		[MenuItem("RCore/Explorer/Open DataPath Folder", false, INDEX + 81)]
+		[MenuItem("RCore/Explorer/DataPath Folder", false, GROUP_5 + 81)]
 		private static void OpenDataPathFolder()
 		{
 			string path = Application.dataPath;
@@ -114,7 +122,7 @@ namespace RCore.Editor
 			Process.Start(psi);
 		}
 		
-		[MenuItem("RCore/Explorer/Open StreamingAssets Folder", false, INDEX + 82)]
+		[MenuItem("RCore/Explorer/StreamingAssets Folder", false, GROUP_5 + 82)]
 		private static void OpenStreamingAssetsFolder()
 		{
 			string path = Application.streamingAssetsPath;
@@ -127,7 +135,7 @@ namespace RCore.Editor
 			Process.Start(psi);
 		}
 		
-		[MenuItem("RCore/Explorer/Open PersistentData Folder", false, INDEX + 83)]
+		[MenuItem("RCore/Explorer/PersistentData Folder", false, GROUP_5 + 83)]
 		private static void OpenPersistentDataFolder()
 		{
 			string path = Application.persistentDataPath;
@@ -139,12 +147,44 @@ namespace RCore.Editor
 			Process.Start(psi);
 		}
 		
-		[MenuItem("RCore/Explorer/Open UnityEditor Folder", false, INDEX + 84)]
+		[MenuItem("RCore/Explorer/UnityEditor Folder", false, GROUP_5 + 84)]
 		private static void OpenUnityEditorFolder()
 		{
 			string path = EditorApplication.applicationPath.Substring(0, EditorApplication.applicationPath.LastIndexOf("/"));
 			var psi = new ProcessStartInfo(path);
 			Process.Start(psi);
+		}
+		
+		//==========================================================
+		
+		[MenuItem("RCore/Tools/Tools Collection", priority = GROUP_6 + 1)]
+		private static void OpenToolsCollectionWindow()
+		{
+			ToolsCollectionWindow.ShowWindow();
+		}
+
+		[MenuItem("RCore/Tools/Screenshot Taker", priority = GROUP_6 + 2)]
+		public static void OpenScreenshotTaker()
+		{
+			ScreenshotTaker.ShowWindow();
+		}
+		
+		[MenuItem("RCore/Tools/Find Component Reference", priority = GROUP_6 + 3)]
+		public static void OpenFindComponentReferenceWindow()
+		{
+			FindComponentReferenceWindow.ShowWindow();
+		}
+		
+		[MenuItem("RCore/Tools/Find Objects", priority = GROUP_6 + 4)]
+		public static void OpenObjectsFinderWindow()
+		{
+			ObjectsFinderWindow.ShowWindow();
+		}
+		
+		[MenuItem("RCore/Tools/Search And Replace Asset Toolkit", priority = GROUP_6 + 5)]
+		public static void OpenSearchAndReplaceAssetWindow()
+		{
+			SearchAndReplaceAssetWindow.ShowWindow();
 		}
 	}
 }

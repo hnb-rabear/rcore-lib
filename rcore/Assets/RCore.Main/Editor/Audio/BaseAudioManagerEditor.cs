@@ -57,16 +57,5 @@ namespace RCore.Editor.Audio
 			if (GUI.changed)
 				EditorUtility.SetDirty(m_Script);
 		}
-		
-		[MenuItem("RCore/Audio/Add Audio Manager")]
-		private static void AddAudioManager()
-		{
-			var manager = FindObjectOfType<AudioManager>();
-			if (manager != null)
-				return;
-
-			var obj = new GameObject("AudioManager");
-			obj.AddComponent<AudioManager>();
-		}
 	}
 }

@@ -20,8 +20,7 @@ namespace RCore.Editor.Tool
 		private int m_unusedScriptCount;
 		private List<GameObject> m_particleSystemPrefabs;
 		private Vector2 m_scrollPosition;
-
-		[MenuItem("RCore/Tools/Objects Finder")]
+		
 		public static void ShowWindow()
 		{
 			var window = GetWindow<ObjectsFinderWindow>();

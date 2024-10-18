@@ -18,7 +18,7 @@ namespace RCore.Editor.Tool
 		private static Dictionary<string, string> m_PathCache = new Dictionary<string, string>();
 
 		// Menu item to toggle Active state
-		[MenuItem("RCore/Tools/Play Asset Delivery Filter Toggle")]
+		[MenuItem("RCore/Asset Database/Toggle Play Asset Delivery Filter")]
 		private static void ToggleActive()
 		{
 			m_Active.Value = !m_Active.Value;
@@ -26,11 +26,11 @@ namespace RCore.Editor.Tool
 		}
 
 		// Menu item with a checkbox to display the active state
-		[MenuItem("RCore/Tools/Play Asset Delivery Filter Toggle", true)]
+		[MenuItem("RCore/Asset Database/Toggle Play Asset Delivery Filter", true)]
 		private static bool ToggleActiveValidate()
 		{
 			// Return true to show the checkmark when m_Active is true
-			Menu.SetChecked("RCore/Tools/Play Asset Delivery Filter Toggle", m_Active.Value);
+			Menu.SetChecked("RCore/Asset Database/Toggle Play Asset Delivery Filter", m_Active.Value);
 			return true;
 		}
 

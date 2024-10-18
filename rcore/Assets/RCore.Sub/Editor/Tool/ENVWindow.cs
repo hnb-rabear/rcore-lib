@@ -154,10 +154,9 @@ namespace RCore.Editor.Tool
             return string.Join(Environment.NewLine, dictionary.Select(item => $"{item.Key}={item.Value}"));
         }
 
-        [MenuItem("RCore/Tools/ENV Manager")]
         public static void ShowWindow()
         {
-            GetWindow(typeof(ENVWindow), false, "ENV Manager", true);
+            GetWindow(typeof(ENVWindow), false, ".env Editor", true);
         }
     }
 }

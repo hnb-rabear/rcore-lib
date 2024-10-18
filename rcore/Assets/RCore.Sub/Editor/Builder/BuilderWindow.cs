@@ -14,6 +14,7 @@ using Debug = UnityEngine.Debug;
 
 namespace RCore.Editor
 {
+    [Obsolete]
     public class BuilderWindow : EditorWindow
     {
         private BuildSettingsCollection m_buildProfilesCollection;
@@ -414,6 +415,12 @@ namespace RCore.Editor
             // Put it back to how it was
             if (EditorUserBuildSettings.activeBuildTarget != savedTarget)
                 EditorUserBuildSettings.SwitchActiveBuildTargetAsync(targetGroup, savedTarget);
+        }
+        
+        public static void ShowWindow()
+        {
+            var window = GetWindow<BuilderWindow>("Builder", true);
+            window.Show();
         }
     }
 }

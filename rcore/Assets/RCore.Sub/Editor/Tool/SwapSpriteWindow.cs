@@ -644,9 +644,8 @@ namespace RCore.Editor.Tool
 
 			return pSource;
 		}
-
-		[MenuItem("RCore/Tools/[Obsoleted] Swap Sprite")]
-		private static void OpenEditorWindow()
+		
+		public static void ShowWindow()
 		{
 			var window = GetWindow<SwapSpriteWindow>("Swap Sprite", true);
 			window.minSize = new Vector2(600, 400);

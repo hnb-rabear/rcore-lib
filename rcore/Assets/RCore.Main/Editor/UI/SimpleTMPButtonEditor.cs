@@ -93,8 +93,20 @@ namespace RCore.Editor.UI
                     if (btn is not SimpleTMPButton)
                     {
                         var obj = btn.gameObject;
+                        var onClick = btn.onClick;
+                        var enabled = btn.enabled;
+                        var interactable = btn.interactable;
+                        var transition = btn.transition;
+                        var targetGraphic = btn.targetGraphic;
+                        var colors = btn.colors;
                         DestroyImmediate(btn);
-                        obj.AddComponent<SimpleTMPButton>();
+                        var newBtn = obj.AddComponent<SimpleTMPButton>();
+                        newBtn.onClick = onClick;
+                        newBtn.enabled = enabled;
+                        newBtn.interactable = interactable;
+                        newBtn.transition = transition;
+                        newBtn.targetGraphic = targetGraphic;
+                        newBtn.colors = colors;
                     }
                 }
             }

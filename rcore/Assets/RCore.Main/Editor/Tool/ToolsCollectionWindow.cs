@@ -1171,10 +1171,7 @@ namespace RCore.Editor.Tool
 
 #endregion
 
-		//===================================================================================================
-
-		[MenuItem("RCore/Tools/Tools Collection %_&_k")]
-		private static void OpenEditorWindow()
+		public static void ShowWindow()
 		{
 			var window = GetWindow<ToolsCollectionWindow>("Tools Collection", true);
 			window.Show();

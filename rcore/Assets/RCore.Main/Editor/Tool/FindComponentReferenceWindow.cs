@@ -8,8 +8,7 @@ namespace RCore.Editor.Tool
 {
 	public class FindComponentReferenceWindow : EditorWindow
 	{
-		[MenuItem("RCore/Tools/Find Component Reference")]
-		private static void ShowWindow()
+		public static void ShowWindow()
 		{
 			var window = GetWindow<FindComponentReferenceWindow>("Find Component Reference", true);
 			window.Show();

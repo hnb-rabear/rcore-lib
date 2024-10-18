@@ -4,7 +4,7 @@ using System.Reflection;
 using System;
 using UnityEditorInternal;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(MeshRenderer))]

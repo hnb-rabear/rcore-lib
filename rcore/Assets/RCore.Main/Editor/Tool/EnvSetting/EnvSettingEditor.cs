@@ -12,7 +12,7 @@ using RCore.Editor;
 using System;
 using EditorPrefs = UnityEditor.EditorPrefs;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[CustomEditor(typeof(EnvSetting))]
 	public class EnvSettingEditor : UnityEditor.Editor

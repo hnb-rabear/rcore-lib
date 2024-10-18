@@ -26,7 +26,7 @@ namespace RCore.Data.JObject
 			return null;
 		}
 		
-		public static T CreateCollection<T>(string key) where T : JObjectCollection, new()
+		public static T CreateCollection<T>(string key, T defaultVal = null) where T : JObjectCollection, new()
 		{
 			if (collections.ContainsKey(key))
 			{
@@ -36,8 +36,12 @@ namespace RCore.Data.JObject
 
 			var collection = new T();
 			collection.key = key;
-			collection.Load();
-
+			if (!collection.Load() && defaultVal != null)
+			{
+				string json = defaultVal.ToJson();
+				collection = JsonUtility.FromJson<T>(json);
+				collection.key = key;
+			}
 			SaveCollectionKey(key);
 			collections.Add(key, collection);
 

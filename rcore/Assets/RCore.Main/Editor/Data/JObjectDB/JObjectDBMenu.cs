@@ -1,8 +1,8 @@
-using RCore.Editor;
+using RCore.Data.JObject;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Data.JObject.Editor
+namespace RCore.Editor.Data.JObject
 {
 	public static class JObjectDBMenu
 	{

@@ -27,6 +27,8 @@ namespace RCore.Data.JObject
 		}
 		public virtual bool Load()
 		{
+			if (!PlayerPrefs.HasKey(key))
+				return false;
 			var json = PlayerPrefs.GetString(key);
 			return Load(json);
 		}
@@ -45,20 +47,6 @@ namespace RCore.Data.JObject
 				}
 			}
 			return false;
-		}
-		public virtual T Load<T>(T defaultVal)
-		{
-			var json = PlayerPrefs.GetString(key);
-			try
-			{
-				var data = JsonUtility.FromJson<T>(json);
-				return data;
-			}
-			catch (Exception ex)
-			{
-				Debug.LogError(ex);
-				return defaultVal;
-			}
 		}
 		public void Delete() => PlayerPrefs.DeleteKey(key);
 		/// <summary>

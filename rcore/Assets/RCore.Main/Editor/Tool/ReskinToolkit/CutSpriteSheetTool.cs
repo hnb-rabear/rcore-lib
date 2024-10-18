@@ -1,12 +1,10 @@
-﻿using RCore.Common;
-using RCore.Editor;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[Serializable]
 	public class CutSpriteSheetTool

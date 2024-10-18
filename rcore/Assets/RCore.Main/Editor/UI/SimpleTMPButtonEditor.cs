@@ -1,12 +1,12 @@
 using RCore.Common;
-using RCore.Editor;
+using RCore.UI;
 using System;
 using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.UI.Editor
+namespace RCore.Editor.UI
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(SimpleTMPButton), true)]

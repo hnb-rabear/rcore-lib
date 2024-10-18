@@ -2,22 +2,22 @@ using RCore.Common;
 using RCore.Editor;
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[Serializable]
-	public class ReplaceTMPFontTool
+	public class ReplaceFontTool
 	{
 		[Serializable]
 		public class Input
 		{
-			public List<TMP_FontAsset> targets = new List<TMP_FontAsset>();
-			public TMP_FontAsset replace;
+			public List<Font> targets = new List<Font>();
+			public Font replace;
 		}
 
 		[SerializeField] private List<Input> m_inputs = new List<Input>();
@@ -31,7 +31,7 @@ namespace RCore.Editor
 				label = "Add Targets And Replace",
 			};
 
-			if (EditorHelper.HeaderFoldout("Search And Replace TMP Font", null, false, btn))
+			if (EditorHelper.HeaderFoldout("Search And Replace Font", null, false, btn))
 			{
 				EditorGUILayout.BeginVertical("box");
 				{
@@ -43,7 +43,7 @@ namespace RCore.Editor
 							{
 								EditorGUILayout.BeginHorizontal();
 								{
-									target.replace = (TMP_FontAsset)EditorHelper.ObjectField<TMP_FontAsset>(target.replace, "");
+									target.replace = (Font)EditorHelper.ObjectField<Font>(target.replace, "");
 									if (EditorHelper.ButtonColor("x", Color.red, 23))
 									{
 										m_inputs.Remove(target);
@@ -65,7 +65,7 @@ namespace RCore.Editor
 								{
 									EditorGUILayout.BeginHorizontal();
 									{
-										target.targets[t] = (TMP_FontAsset)EditorHelper.ObjectField<TMP_FontAsset>(target.targets[t], "");
+										target.targets[t] = (Font)EditorHelper.ObjectField<Font>(target.targets[t], "");
 										if (EditorHelper.ButtonColor("x", Color.red, 23))
 										{
 											target.targets.RemoveAt(t);
@@ -103,47 +103,28 @@ namespace RCore.Editor
 
 					if (EditorHelper.Button("Search and replace in Scene"))
 					{
+						AssetDatabase.StartAssetEditing();
+
 						var objs = Object.FindObjectsOfType<GameObject>();
 						int count = 0;
-						var objectsFound = new List<GameObject>();
-						foreach (var t in objs)
+						foreach (var obj in objs)
 						{
-							bool valid = false;
-							var txtsUI = t.GetComponentsInChildren<TextMeshProUGUI>(true);
-							foreach (var com in txtsUI)
+							var images = obj.GetComponentsInChildren<Text>(true);
+							foreach (var com in images)
 							{
 								foreach (var target in m_inputs)
 									if (target.targets.Contains(com.font))
 									{
 										com.font = target.replace;
-										valid = true;
 										count++;
-										EditorUtility.SetDirty(t);
+										EditorUtility.SetDirty(obj);
 									}
 							}
-
-							var txts = t.GetComponentsInChildren<TextMeshPro>(true);
-							foreach (var com in txts)
-							{
-								foreach (var target in m_inputs)
-									if (target.targets.Contains(com.font))
-									{
-										com.font = target.replace;
-										valid = true;
-										count++;
-										EditorUtility.SetDirty(t);
-									}
-							}
-
-							if (valid && !objectsFound.Contains(t))
-								objectsFound.Add(t);
 						}
 
-						foreach (var g in objectsFound)
-							EditorUtility.SetDirty(g);
-
-						Selection.objects = objectsFound.ToArray();
+						AssetDatabase.StopAssetEditing();
 						AssetDatabase.SaveAssets();
+						AssetDatabase.Refresh();
 
 						Debug.Log($"Replace {count} Objects");
 					}

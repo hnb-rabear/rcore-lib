@@ -1,7 +1,8 @@
-﻿using UnityEditor;
+﻿using RCore.Inspector;
+using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
 	/// <summary>
 	/// A property drawer for fields marked with the Highlight Attribute.

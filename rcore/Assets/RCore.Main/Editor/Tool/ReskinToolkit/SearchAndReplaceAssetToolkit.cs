@@ -1,8 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	public class SearchAndReplaceAssetToolkit : ScriptableObject
 	{

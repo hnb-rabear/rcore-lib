@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using RCore.Inspector;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
 //Original by DYLAN ENGELMAN http://jupiterlighthousestudio.com/custom-inspectors-unity/
 //Altered by Brecht Lecluyse http://www.brechtos.com
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
     [CustomPropertyDrawer(typeof(TagSelectorAttribute))]
     public class TagSelectorPropertyDrawer : PropertyDrawer

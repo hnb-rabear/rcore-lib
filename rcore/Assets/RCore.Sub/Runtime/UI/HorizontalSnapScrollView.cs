@@ -344,12 +344,19 @@ namespace RCore.UI
 						m_Items[i].Show();
 				}
 
+				var fromPos = Content.anchoredPosition;
+				float lerp = 0;
 				DOTween.Kill(GetInstanceID());
-				Content.DOAnchorPosX(targetAnchored.x, time)
+				DOTween.To(() => lerp, x => lerp = x, 1f, time)
 					.OnStart(() =>
 					{
 						m_IsSnapping = true;
 						onScrollStart?.Invoke();
+					})
+					.OnUpdate(() =>
+					{
+						contentAnchored.x = Mathf.Lerp(fromPos.x, targetAnchored.x, lerp);
+						Content.anchoredPosition = contentAnchored;
 					})
 					.OnComplete(() =>
 					{

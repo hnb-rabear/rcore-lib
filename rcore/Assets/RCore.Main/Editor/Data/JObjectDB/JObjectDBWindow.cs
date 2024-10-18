@@ -1,10 +1,10 @@
-using RCore.Editor;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using RCore.Data.JObject;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Data.JObject.Editor
+namespace RCore.Editor.Data.JObject
 {
 	public class JObjectDBWindow : EditorWindow
 	{

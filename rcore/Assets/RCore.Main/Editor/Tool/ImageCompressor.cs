@@ -13,7 +13,7 @@ using UnityEngine.Networking;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	public class ImageCompressor : EditorWindow
 	{

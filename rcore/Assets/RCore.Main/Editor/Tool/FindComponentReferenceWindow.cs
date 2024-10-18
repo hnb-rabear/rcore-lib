@@ -1,44 +1,42 @@
-using RCore.Common;
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Reflection;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
-	public class ComponentReferenceFinderWindow : EditorWindow
+	public class FindComponentReferenceWindow : EditorWindow
 	{
-		[MenuItem("RCore/Tools/Component Browser")]
+		[MenuItem("RCore/Tools/Find Component Reference")]
 		private static void ShowWindow()
 		{
-			var window = GetWindow<ComponentReferenceFinderWindow>("Component Browser", true);
+			var window = GetWindow<FindComponentReferenceWindow>("Find Component Reference", true);
 			window.Show();
 		}
 
 		private List<Type> m_types = new List<Type>();
 		private List<string> m_typesArray = new List<string>();
 		private int m_idx;
-		private string m_Filter;
-		private string m_PreFilter;
-		private Vector2 m_ScrollPosition;
+		private string m_filter;
+		private string m_preFilter;
+		private Vector2 m_scrollPosition;
 
 		private void OnGUI()
 		{
-			m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition, false, false);
+			m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, false);
 
-			if (m_Filter != m_PreFilter)
+			if (m_filter != m_preFilter)
 			{
 				m_types = null;
-				m_PreFilter = m_Filter;
+				m_preFilter = m_filter;
 			}
 
 			if (m_types == null)
 				GetAllTypes();
 
 			GUILayout.Label("Filter");
-			m_Filter = EditorGUILayout.TextField(m_Filter);
+			m_filter = EditorGUILayout.TextField(m_filter);
 			GUILayout.Label("Select Script");
 			m_idx = EditorGUILayout.Popup(m_idx, m_typesArray.ToArray());
 
@@ -50,7 +48,7 @@ namespace RCore.Editor
 
 		private void GetAllTypes()
 		{
-			string filter = m_Filter.ToLower();
+			string filter = m_filter.ToLower();
 			m_types = new List<Type>();
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			foreach (var asm in assemblies)

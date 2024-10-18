@@ -2,6 +2,7 @@
  * Author RadBear - nbhung71711 @gmail.com - 2017
  **/
 
+using RCore.Common;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -131,33 +132,49 @@ namespace RCore.Mics
 #endif
         }
 
-        public void FadeIn(Image pImage, float pTime, Action pOnFinished = null)
+        public void FadeIn(Image pImage, float pTime, bool resetAlpha = true, Action pOnFinished = null)
         {
             var color = pImage.color;
+            if (resetAlpha)
+                color.a = 0;
 #if DOTWEEN
-            color.a = 0f;
-            pImage.color = color;
-            pImage.DOFade(1f, pTime)
+            float alpha = color.a;
+            DOTween.Kill(pImage.GetInstanceID());
+            DOTween.To(() => alpha, x => alpha = x, 1f, pTime)
+                .OnUpdate(() =>
+                {
+                    pImage.color.SetAlpha(alpha);
+                })
                 .OnComplete(() =>
-				{
-					pOnFinished?.Invoke();
-				})
-                .SetId(pImage.GetInstanceID() + GetInstanceID()).SetUpdate(true);
+                {
+                    pImage.color.SetAlpha(1);
+                    pOnFinished?.Invoke();
+                })
+                .SetId(pImage.GetInstanceID())
+                .SetUpdate(true);
 #endif
         }
 
-        public void FadeOut(Image pImage, float pTime, Action pOnFinished = null)
+        public void FadeOut(Image pImage, float pTime, bool resetAlpha = true, Action pOnFinished = null)
         {
             var color = pImage.color;
-#if DOTWEENC
-            color.a = 1f;
-            pImage.color = color;
-            pImage.DOFade(0f, pTime)
+            if (resetAlpha)
+                color.a = 1f;
+#if DOTWEEN
+            float alpha = color.a;
+            DOTween.Kill(pImage.GetInstanceID());
+            DOTween.To(() => alpha, x => alpha = x, 0f, pTime)
+                .OnUpdate(() =>
+                {
+                    pImage.color.SetAlpha(alpha);
+                })
                 .OnComplete(() =>
-				{
-					pOnFinished?.Invoke();
-				})
-                .SetId(pImage.GetInstanceID() + GetInstanceID()).SetUpdate(true);
+                {
+                    pImage.color.SetAlpha(0);
+                    pOnFinished?.Invoke();
+                })
+                .SetId(pImage.GetInstanceID())
+                .SetUpdate(true);
 #endif
         }
 

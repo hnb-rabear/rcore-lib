@@ -7,7 +7,7 @@ using System.Collections;
 using UnityEditor;
 using System.Reflection;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
 	[CustomEditor(typeof(MonoBehaviour), true)]
 	[CanEditMultipleObjects]

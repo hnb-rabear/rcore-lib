@@ -1,12 +1,12 @@
+using RCore.Audio;
 using System;
 using RCore.Common;
-using RCore.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.AddressableAssets;
 using UnityEngine.AddressableAssets;
 
-namespace RCore.Audio.Editor
+namespace RCore.Editor.Audio
 {
 	[CustomEditor(typeof(AudioCollection))]
 	public class AudioCollectionEditor : UnityEditor.Editor

@@ -8,7 +8,7 @@ namespace RCore.Data
 	public static class BinaryDataSaver
 	{
 		private const string EXTENSION = ".bin";
-		private static readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+		private static readonly BinaryFormatter m_BinaryFormatter = new BinaryFormatter();
 		
 		[Serializable]
 		private class DataWrap
@@ -24,7 +24,7 @@ namespace RCore.Data
 			var dataWrap = new DataWrap(data);
 			using (FileStream file = File.Create(path))
 			{
-				binaryFormatter.Serialize(file, dataWrap);
+				m_BinaryFormatter.Serialize(file, dataWrap);
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace RCore.Data
 				return "";
 			using (FileStream file = File.OpenRead(path))
 			{
-				var output = (DataWrap)binaryFormatter.Deserialize(file);
+				var output = (DataWrap)m_BinaryFormatter.Deserialize(file);
 				return output.document;
 			}
 		}

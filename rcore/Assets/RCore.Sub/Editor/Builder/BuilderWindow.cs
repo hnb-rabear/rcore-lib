@@ -33,7 +33,7 @@ namespace RCore.Editor
             m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, false);
             m_selectedCount = 0;
 
-            EditorHelper.BoxVertical("Simple Builder Util [by RadBear]", () =>
+            EditorHelper.BoxVertical("Builder", () =>
             {
                 for (int i = 0; i < m_buildProfilesCollection.profiles.Count; i++)
                 {

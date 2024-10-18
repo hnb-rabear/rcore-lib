@@ -1,12 +1,12 @@
+using RCore.Audio;
 using System;
-using RCore.Editor;
 using UnityEditor;
 using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using RCore.Common;
 
-namespace RCore.Audio.Editor
+namespace RCore.Editor.Audio
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(SfxSource))]

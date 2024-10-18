@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[ExecuteInEditMode]
 	public class ScreenshotTaker : EditorWindow

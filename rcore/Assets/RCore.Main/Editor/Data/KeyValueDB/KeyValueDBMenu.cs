@@ -2,11 +2,11 @@
  * Author RadBear - Nguyen Ba Hung - nbhung71711@gmail.com
  **/
 
+using RCore.Data.KeyValue;
 using UnityEditor;
 using UnityEngine;
-using RCore.Editor;
 
-namespace RCore.Data.KeyValue.Editor
+namespace RCore.Editor.Data.KeyValue
 {
 	public static class KeyValueDBMenu
 	{

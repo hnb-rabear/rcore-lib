@@ -1,5 +1,4 @@
 ﻿using RCore.Common;
-using RCore.Editor;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -8,10 +7,10 @@ using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 using EditorPrefs = UnityEditor.EditorPrefs;
 
-namespace RCore.Editor.SRW
+namespace RCore.Editor.Tool
 {
 	[System.Obsolete]
-	public class SpritesReplacerWindow : EditorWindow
+	public class SwapSpriteWindow : EditorWindow
 	{
 		private Vector2 m_ScrollPositionAtlasTab;
 		private Vector2 m_ScrollPositionCompareTab;
@@ -24,11 +23,11 @@ namespace RCore.Editor.SRW
 		private bool m_SelectAll;
 		private List<Sprite> m_LeftOutputSprites;
 		private List<Sprite> m_RightOutputSprites;
-		private SpritesReplacerData m_Data;
+		private SwapSpriteTool m_Data;
 
 		private void OnEnable()
 		{
-			m_Data = SpritesReplacerData.LoadOrCreateSettings();
+			m_Data = SwapSpriteTool.LoadOrCreateSettings();
 		}
 
 		private void OnGUI()
@@ -646,10 +645,10 @@ namespace RCore.Editor.SRW
 			return pSource;
 		}
 
-		[MenuItem("RCore/Tools/[Obsoleted] Sprites Replacer")]
+		[MenuItem("RCore/Tools/[Obsoleted] Swap Sprite")]
 		private static void OpenEditorWindow()
 		{
-			var window = GetWindow<SpritesReplacerWindow>("Textures Replacer", true);
+			var window = GetWindow<SwapSpriteWindow>("Swap Sprite", true);
 			window.minSize = new Vector2(600, 400);
 			window.Show();
 		}

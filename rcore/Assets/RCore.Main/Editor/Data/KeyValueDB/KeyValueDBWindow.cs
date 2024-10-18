@@ -3,13 +3,13 @@
  **/
 
 using RCore.Common;
-using RCore.Editor;
+using RCore.Data.KeyValue;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using EditorPrefs = UnityEditor.EditorPrefs;
 
-namespace RCore.Data.KeyValue.Editor
+namespace RCore.Editor.Data.KeyValue
 {
 	public class KeyValueDBWindow : EditorWindow
 	{

@@ -9,7 +9,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
     public class EnvBuilder : IPreprocessBuildWithReport, IPostprocessBuildWithReport
     {

@@ -150,11 +150,11 @@ namespace RCore.Data.JObject
 		/// </summary>
 		protected abstract void Load();
 		
-		protected T CreateCollection<T>(string key) where T : JObjectCollection, new()
+		protected T CreateCollection<T>(string key, T defaultVal = null) where T : JObjectCollection, new()
 		{
 			if (string.IsNullOrEmpty(key))
 				key = typeof(T).Name;
-			var newCollection = JObjectDB.CreateCollection<T>(key);
+			var newCollection = JObjectDB.CreateCollection(key, defaultVal);
 			if (newCollection != null)
 				m_collections.Add(newCollection);
 			return newCollection;

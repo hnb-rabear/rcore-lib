@@ -1,12 +1,12 @@
 ﻿/***
- * Author RadBear - Nguyen Ba Hung - nbhung71711@gmail.com 
+ * Author RadBear - Nguyen Ba Hung - nbhung71711@gmail.com - 2019
  **/
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using RCore.Editor;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	public class EnvProfilesCollection : ScriptableObject
 	{

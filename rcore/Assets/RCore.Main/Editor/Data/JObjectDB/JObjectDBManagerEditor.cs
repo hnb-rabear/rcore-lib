@@ -1,9 +1,9 @@
-using RCore.Common;
+using RCore.Data.JObject;
 using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Data.JObject.Editor
+namespace RCore.Editor.Data.JObject
 {
 	[CustomEditor(typeof(JObjectDBManager), true)]
 	public class JObjectDBManagerEditor : UnityEditor.Editor

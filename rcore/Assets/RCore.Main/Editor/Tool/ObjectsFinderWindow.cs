@@ -11,7 +11,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	public class ObjectsFinderWindow : EditorWindow
 	{

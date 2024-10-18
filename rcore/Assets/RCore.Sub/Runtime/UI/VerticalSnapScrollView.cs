@@ -302,18 +302,27 @@ namespace RCore.UI
                 else if (time > m_MaxSpringTime)
                     time = m_MaxSpringTime;
 
+                var fromPos = Content.anchoredPosition;
+                float lerp = 0;
                 DOTween.Kill(GetInstanceID());
-                Content.DOAnchorPosY(targetAnchored.y, time)
-                    .OnStart(() => { m_IsSnapping = true; })
+                DOTween.To(() => lerp, x => lerp = x, 1f, time)
+                    .OnStart(() => m_IsSnapping = true)
+                    .OnUpdate(() =>
+                    {
+                        contentAnchored.y = Mathf.Lerp(fromPos.y, targetAnchored.y, lerp);
+                        Content.anchoredPosition = contentAnchored;
+                    })
                     .OnComplete(() =>
                     {
                         m_IsSnapping = false;
                         contentAnchored.y = targetAnchored.y;
                         Content.anchoredPosition = contentAnchored;
-                    }).SetId(GetInstanceID());
+                    })
+                    .SetUpdate(true)
+                    .SetId(GetInstanceID());
 #else
                 contentAnchored.y = targetAnchored.y;
-                Content.anchoredPosition = contentAnchored; 
+                Content.anchoredPosition = contentAnchored;
 #endif
             }
         }

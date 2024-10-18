@@ -1,10 +1,7 @@
-﻿using System;
-using RCore.Common;
-using RCore.Editor;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	public class SearchAndReplaceAssetWindow : EditorWindow
 	{

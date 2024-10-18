@@ -141,7 +141,6 @@ namespace RCore.UI
             {
 #if DOTWEEN
                 var fromPos = m_Content.anchoredPosition;
-
                 float time = Vector2.Distance(targetAnchoredPos, fromPos) / (m_TransitionSpeed / Time.deltaTime);
                 if (time == 0)
                     return;
@@ -150,12 +149,20 @@ namespace RCore.UI
                 else if (time > m_mMaxTweenTime)
                     time = m_mMaxTweenTime;
 
+                float lerp = 0;
                 DOTween.Kill(GetInstanceID());
-                m_Content.DOAnchorPosY(targetAnchoredPos.y, time)
+                DOTween.To(() => lerp, x => lerp = x, 1f, time)
+                    .OnUpdate(() =>
+                    {
+                        var posY = Mathf.Lerp(fromPos.y, targetAnchoredPos.y, lerp);
+                        m_Content.anchoredPosition = new Vector2(fromPos.x, posY);
+                    })
                     .OnComplete(() =>
                     {
                         m_Content.anchoredPosition = targetAnchoredPos;
-                    }).SetId(GetInstanceID());
+                    })
+                    .SetUpdate(true)
+                    .SetId(GetInstanceID());
 #else
                 m_Content.anchoredPosition = targetAnchoredPos;
 #endif

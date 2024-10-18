@@ -184,18 +184,27 @@ namespace RCore.UI
                     return;
 
 #if DOTWEEN
+                var fromPos = m_scrollView.content.anchoredPosition;
+                float lerp = 0;
                 DOTween.Kill(GetInstanceID());
-                m_scrollView.content.DOAnchorPosX(targetAnchored, time)
+                DOTween.To(() => lerp, x => lerp = x, 1f, time)
                     .OnStart(() => { m_isSnapping = true; })
+                    .OnUpdate(() =>
+                    {
+                        contentAnchored.x = Mathf.Lerp(fromPos.x, targetAnchored, lerp);
+                        m_scrollView.content.anchoredPosition = contentAnchored;
+                    })
                     .OnComplete(() =>
                     {
                         m_isSnapping = false;
                         contentAnchored.x = targetAnchored;
                         m_scrollView.content.anchoredPosition = contentAnchored;
-                    }).SetId(GetInstanceID());
+                    })
+                    .SetUpdate(true)
+                    .SetId(GetInstanceID());
 #else
                 contentAnchored.x = targetAnchored;
-                mScrollView.content.anchoredPosition = contentAnchored;
+                m_scrollView.content.anchoredPosition = contentAnchored;
 #endif
             }
         }

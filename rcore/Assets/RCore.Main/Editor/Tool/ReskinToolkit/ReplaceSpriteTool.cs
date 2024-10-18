@@ -19,7 +19,7 @@ using tpsByteDecimal;
 using tpsDecimalByte;
 #endif
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[Serializable]
 	public class ReplaceSpriteTool

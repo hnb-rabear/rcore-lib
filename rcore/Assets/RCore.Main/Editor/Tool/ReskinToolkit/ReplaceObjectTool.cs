@@ -7,7 +7,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[Serializable]
 	public class ReplaceObjectTool

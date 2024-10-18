@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace RCore.Editor
+namespace RCore.Editor.Tool
 {
 	[System.Serializable]
 	public class UpdateImagePropertyTool

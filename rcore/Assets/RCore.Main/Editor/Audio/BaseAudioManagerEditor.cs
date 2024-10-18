@@ -1,8 +1,8 @@
-using RCore.Editor;
+using RCore.Audio;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Audio.Editor
+namespace RCore.Editor.Audio
 {
 	[CustomEditor(typeof(BaseAudioManager), true)]
 	public class BaseAudioManagerEditor : UnityEditor.Editor

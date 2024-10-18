@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using RCore.Inspector;
+using UnityEngine;
 using UnityEditor;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
 	/// <summary>
 	/// A property drawer for fields marked with the CommentAttribute. Similar to Header, but useful

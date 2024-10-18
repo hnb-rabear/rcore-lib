@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using RCore.Inspector;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
     [CustomPropertyDrawer(typeof(SingleLayerAttribute))]
     public class SingleLayerPropertyDrawer : PropertyDrawer

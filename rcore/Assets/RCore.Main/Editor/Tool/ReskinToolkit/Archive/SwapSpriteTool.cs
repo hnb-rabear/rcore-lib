@@ -1,11 +1,9 @@
-﻿using RCore.Common;
-using RCore.Editor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Editor.SRW
+namespace RCore.Editor.Tool
 {
     [System.Serializable]
     public class AtlasTexture
@@ -42,7 +40,7 @@ namespace RCore.Editor.SRW
         public Sprite right;
     }
     
-    public class SpritesReplacerData : ScriptableObject
+    public class SwapSpriteTool : ScriptableObject
     {
         public static readonly string FilePath = "Assets/Editor/TexturesReplacerSave.asset";
         public List<Sprite> leftInputSprites = new List<Sprite>();
@@ -50,11 +48,11 @@ namespace RCore.Editor.SRW
         public List<AtlasTexture> leftAtlasTextures = new List<AtlasTexture>();
         public List<AtlasTexture> rightAtlasTextures = new List<AtlasTexture>();
         public List<SpriteToSprite> spritesToSprites = new List<SpriteToSprite>();
-        public static SpritesReplacerData LoadOrCreateSettings()
+        public static SwapSpriteTool LoadOrCreateSettings()
         {
-            var collection = AssetDatabase.LoadAssetAtPath(FilePath, typeof(SpritesReplacerData)) as SpritesReplacerData;
+            var collection = AssetDatabase.LoadAssetAtPath(FilePath, typeof(SwapSpriteTool)) as SwapSpriteTool;
             if (collection == null)
-	            collection = EditorHelper.CreateScriptableAsset<SpritesReplacerData>(FilePath);
+	            collection = EditorHelper.CreateScriptableAsset<SwapSpriteTool>(FilePath);
             return collection;
         }
     }

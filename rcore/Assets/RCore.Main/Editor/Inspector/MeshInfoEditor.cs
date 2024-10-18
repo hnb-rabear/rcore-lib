@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace RCore.Inspector.Editor
+namespace RCore.Editor.Inspector
 {
     [CustomEditor(typeof(SkinnedMeshRenderer))]
     [CanEditMultipleObjects]
